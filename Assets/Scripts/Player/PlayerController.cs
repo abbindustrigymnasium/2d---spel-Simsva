@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour {
   private Vector2 movementRangeMin, movementRangeMax;
   private bool focus, shooting;
 
-  private float nextFire, firedelay;
+  private float nextFire;
   public float firerate, shotSpeed;
 
   private uint score, hiScore; // TODO: Move hiScore to external file 
@@ -65,11 +65,9 @@ public class PlayerController : MonoBehaviour {
     spriteRenderer = GetComponent<SpriteRenderer>();
     pixelCamera = Camera.main.GetComponent<PixelPerfectCamera>();
 
-    // Convert firerate to delay
+    // Default firerate
     if(firerate <= 0)
-      firedelay = 0.1f;
-    else
-      firedelay = 1/firerate;
+      firerate = 15f;
   }
 
   void Start() {
