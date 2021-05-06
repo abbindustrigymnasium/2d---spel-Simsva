@@ -3,6 +3,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
   public static Vector2 bottomLeft, topRight;
   public float speed = 0f;
+  public bool follow = false; // WIP
 
   void FixedUpdate() {
     transform.Translate(transform.up * speed * Time.fixedDeltaTime);

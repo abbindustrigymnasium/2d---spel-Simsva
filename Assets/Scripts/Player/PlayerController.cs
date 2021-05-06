@@ -1,34 +1,40 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
 
 public class PlayerController : MonoBehaviour {
+  public static PlayerController instance;
+
+  // Components
   private Rigidbody2D rb;
   private CircleCollider2D collider2d;
   private Animator anim;
-  private SpriteRenderer spriteRenderer, focusHitbox;
-  private PixelPerfectCamera pixelCamera;
+  private SpriteRenderer focusHitbox;
 
+  // Prefabs
+  public GameObject orbPrefab;
+
+  // Movement/controls
   public float movementSpeed, focusMovementSpeed;
-
   private Vector2 movement;
   private Vector2 movementRangeMin, movementRangeMax;
   private bool focus, shooting;
 
+  // Shooting
+  public float firerate, shotSpeed, damage;
+  private int orbs;
   private float nextFire;
-  public float firerate, shotSpeed;
   private BulletData bulletData;
 
+  // Score
   private uint score, hiScore; // TODO: Move hiScore to external file 
   private int lives, bombs;
-  private float power; public float testPower; // Remove
-  public static float damage;
+  private float power;
+  
+  // Testing, remove later
+  public float testPower;
 
   // Reset score, lives, etc. to default
-  void ResetScore() {
-    ResetScore(2, 3);
-  }
-
-  void ResetScore(int startLives, int startBombs) {
+  void ResetScore(int startLives = 2, int startBombs = 3) {
     score = 0; hiScore = 0;
     lives = startLives; bombs = startBombs;
     ChangePower(0f);
@@ -37,6 +43,7 @@ public class PlayerController : MonoBehaviour {
     Score.UpdatePlayer(lives); Score.UpdateBombs(bombs);
   }
 
+  // Actions
   void Die() {
     if(lives > 0) {
       lives--;
@@ -53,10 +60,27 @@ public class PlayerController : MonoBehaviour {
       bombs--;
       Score.UpdateBombs(bombs);
 
-      BulletHandler.KillAllBullets();
+      BulletHandler.KillAllBullets(1);
     }
   }
 
+  // Add/remove orbs
+  void UpdateOrb(int newOrbs) {
+    newOrbs = Mathf.Clamp(newOrbs, 0, 4);
+    if(orbs != newOrbs) {
+      orbs = newOrbs;
+      Orb.orbsEnabled = newOrbs;
+
+      // Enable orb GameObjects
+      for(int i = 0; i < 4; i++) {
+        GameObject orb = transform.Find("Orbs").Find("Orb" + i.ToString()).gameObject;
+
+        orb.SetActive(i < newOrbs);
+      }
+    }
+  }
+
+  // Update power value
   void ChangePower(float newPower) {
     newPower = Mathf.Clamp(newPower, 0f, 5f);
     testPower = newPower; // Remove
@@ -64,39 +88,44 @@ public class PlayerController : MonoBehaviour {
     power = newPower;
     Score.UpdatePower(newPower);
     damage = Mathf.Lerp(1f, 5f, newPower);
+
+    UpdateOrb(Mathf.Clamp(Mathf.FloorToInt(newPower), 0, 4));
   }
 
+  // Shoot
   void HandleShot(BulletData data, float power) {
-    switch(Mathf.Floor(power)) {
-    case 0f:
-      BulletHandler.ShootSplit(data, 5f, 3);
+    switch(Mathf.FloorToInt(power)) {
+    case 0:
+    case 1:
+      BulletHandler.ShootSplit(data, 1f, 2);
       break;
-    case 1f:
+    case 2:
+    case 3:
       BulletHandler.ShootSplit(data, 3f, 3);
       break;
-    case 2f:
-      BulletHandler.ShootSplit(data, 4f, 4);
-      break;
-    case 3f:
-      BulletHandler.ShootSplit(data, 3f, 4);
-      break;
-    case 4f:
-      BulletHandler.ShootSplit(data, 5f, 5);
+    case 4:
+      BulletHandler.ShootSplit(data, 2f, 3);
       break;
     default:
-      BulletHandler.ShootSplit(data, 3f, 5);
+      BulletHandler.ShootSplit(data, 3f, 4);
       break;
+    }
+
+    foreach(Transform orb in transform.Find("Orbs")) {
+      if(orb.gameObject.activeSelf)
+        orb.GetComponent<Orb>().Shoot();
     }
   }
 
   void Awake() {
+    // Save static reference to instance
+    instance = this;
+
     // Get Components
     rb = GetComponent<Rigidbody2D>();
     collider2d = GetComponent<CircleCollider2D>();
     anim = GetComponent<Animator>();
     focusHitbox = transform.Find("FocusHitbox").GetComponent<SpriteRenderer>();
-    spriteRenderer = GetComponent<SpriteRenderer>();
-    pixelCamera = Camera.main.GetComponent<PixelPerfectCamera>();
 
     // Default firerate
     if(firerate <= 0)
@@ -121,12 +150,21 @@ public class PlayerController : MonoBehaviour {
       Color.red,
       shotSpeed
     );
+
+    // Initialize orbs
+    for(int i = 0; i < 4; i++) {
+      GameObject orb = Instantiate(orbPrefab, transform.Find("Orbs"));
+      orb.SetActive(false);
+      orb.GetComponent<Orb>().id = i;
+      orb.name = "Orb" + i.ToString();
+    }
   }
 
   void Update() {
     // Handle controls
     focus = Input.GetButton("Focus");
     focusHitbox.enabled = focus;
+    Orb.radius = focus ? .4f : .6f;
 
     shooting = Input.GetButton("Shoot");
     // Reset fire timer
