@@ -15,8 +15,6 @@ public class Score : MonoBehaviour {
 
   void Awake() {
     hiScore = transform.Find("HiScore").gameObject.GetComponent<TMP_Text>();
-    Debug.Log(transform.Find("HiScore"));
-    Debug.Log(hiScore);
     score   = transform.Find("Score").GetComponent<TMP_Text>();
     player  = transform.Find("Player").GetComponent<TMP_Text>();
     bombs   = transform.Find("Bombs").GetComponent<TMP_Text>();
