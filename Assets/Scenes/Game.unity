@@ -1318,8 +1318,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 250
   focusMovementSpeed: 100
-  firerate: 10
-  shotSpeed: 0
+  firerate: 15
+  shotSpeed: 8
+  shotSpread: 5
+  shotAmount: 4
 --- !u!50 &1470584553
 Rigidbody2D:
   serializedVersion: 4

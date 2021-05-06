@@ -1,5 +1,21 @@
 using UnityEngine;
 
+public struct BulletData {
+  public Vector3 pos;
+  public float rot;
+  public bool friendly;
+  public Color color;
+  public float velocity;
+
+  public BulletData(Vector3 pos, float rot, bool friendly, Color color, float velocity) {
+    this.pos = pos;
+    this.rot = rot;
+    this.friendly = friendly;
+    this.color = color;
+    this.velocity = velocity;
+  }
+}
+
 public class BulletHandler : MonoBehaviour {
   private static Transform staticTransform;
   public static GameObject staticBullet;
@@ -19,15 +35,23 @@ public class BulletHandler : MonoBehaviour {
     //Debug.Log(Bullet.bottomLeft); Debug.Log(Bullet.topRight);
   }
 
-  public static void ShootBullet(Vector3 pos, float rot, bool friendly, Color color, float velocity=0f) {
-    GameObject newBullet = Instantiate(staticBullet, pos, Quaternion.AngleAxis(rot, Vector3.forward), staticTransform);
-    newBullet.GetComponent<SpriteRenderer>().color = color;
-    newBullet.tag = friendly ? "Friendly" : "Enemy";
-    newBullet.GetComponent<Bullet>().speed = velocity;
+  // Shoot one bullet
+  public static void ShootBullet(BulletData data) {
+    GameObject newBullet = Instantiate(staticBullet, data.pos, Quaternion.AngleAxis(data.rot, Vector3.forward), staticTransform);
+    newBullet.GetComponent<SpriteRenderer>().color = data.color;
+    newBullet.tag = data.friendly ? "Friendly" : "Enemy";
+    newBullet.GetComponent<Bullet>().speed = data.velocity;
   }
 
-  public static void ShootBullet(Vector3 pos, float rot, bool friendly, float velocity=0f) {
-    ShootBullet(pos, rot, friendly, Color.red, velocity);
+  // Shoot spread bullets
+  public static void ShootSplit(BulletData data, float spread, int amount) {
+    float difference = spread/(amount-1);
+    data.rot -= spread/2;
+
+    for(int i = 0; i < amount; i++) {
+      ShootBullet(data);
+      data.rot += difference;
+    }
   }
 
   public static void KillAllBullets() {

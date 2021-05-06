@@ -16,10 +16,12 @@ public class PlayerController : MonoBehaviour {
 
   private float nextFire;
   public float firerate, shotSpeed;
+  private BulletData bulletData;
 
   private uint score, hiScore; // TODO: Move hiScore to external file 
   private int lives, bombs;
-  private float power;
+  private float power; public float testPower; // Remove
+  public static float damage;
 
   // Reset score, lives, etc. to default
   void ResetScore() {
@@ -29,11 +31,10 @@ public class PlayerController : MonoBehaviour {
   void ResetScore(int startLives, int startBombs) {
     score = 0; hiScore = 0;
     lives = startLives; bombs = startBombs;
-    power = 0f;
+    ChangePower(0f);
     
     Score.UpdateScore(score); Score.UpdateHiScore(hiScore);
     Score.UpdatePlayer(lives); Score.UpdateBombs(bombs);
-    Score.UpdatePower(power);
   }
 
   void Die() {
@@ -53,6 +54,38 @@ public class PlayerController : MonoBehaviour {
       Score.UpdateBombs(bombs);
 
       BulletHandler.KillAllBullets();
+    }
+  }
+
+  void ChangePower(float newPower) {
+    newPower = Mathf.Clamp(newPower, 0f, 5f);
+    testPower = newPower; // Remove
+
+    power = newPower;
+    Score.UpdatePower(newPower);
+    damage = Mathf.Lerp(1f, 5f, newPower);
+  }
+
+  void HandleShot(BulletData data, float power) {
+    switch(Mathf.Floor(power)) {
+    case 0f:
+      BulletHandler.ShootSplit(data, 5f, 3);
+      break;
+    case 1f:
+      BulletHandler.ShootSplit(data, 3f, 3);
+      break;
+    case 2f:
+      BulletHandler.ShootSplit(data, 4f, 4);
+      break;
+    case 3f:
+      BulletHandler.ShootSplit(data, 3f, 4);
+      break;
+    case 4f:
+      BulletHandler.ShootSplit(data, 5f, 5);
+      break;
+    default:
+      BulletHandler.ShootSplit(data, 3f, 5);
+      break;
     }
   }
 
@@ -79,6 +112,15 @@ public class PlayerController : MonoBehaviour {
 
     movementRangeMin = new Vector2(bottomLeftWorld.x, bottomLeftWorld.y);
     movementRangeMax = new Vector2(topRightWorld.x,   topRightWorld.y);
+
+    // Default bullet data
+    bulletData = new BulletData(
+      Vector3.zero,
+      0f,
+      true,
+      Color.red,
+      shotSpeed
+    );
   }
 
   void Update() {
@@ -100,6 +142,9 @@ public class PlayerController : MonoBehaviour {
     // Animation
     anim.SetFloat("Horizontal", movement.x);
     anim.SetBool("Moving", movement.x != 0);
+
+    // Test power
+    ChangePower(testPower);
   }
 
   void FixedUpdate() {
@@ -113,7 +158,11 @@ public class PlayerController : MonoBehaviour {
 
     // Loop instead of if, for firerates higher than the framerate
     while(shooting && Time.time > nextFire) {
-      BulletHandler.ShootBullet(transform.position + Vector3.up*0.3f, 0f, true, velocity: shotSpeed);
+      // Update velocity and position
+      bulletData.velocity = shotSpeed;
+      bulletData.pos = transform.position + Vector3.up*0.3f;
+
+      HandleShot(bulletData, power);
 
       nextFire += 1/firerate; // TODO: Change to firedelay
     }

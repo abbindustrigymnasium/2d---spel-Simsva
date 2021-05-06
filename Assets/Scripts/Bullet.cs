@@ -4,10 +4,6 @@ public class Bullet : MonoBehaviour {
   public static Vector2 bottomLeft, topRight;
   public float speed = 0f;
 
-  void Start() {
-    Debug.Log(speed);
-  }
-
   void FixedUpdate() {
     transform.Translate(transform.up * speed * Time.fixedDeltaTime);
 
