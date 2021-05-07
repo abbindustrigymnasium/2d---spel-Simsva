@@ -2,10 +2,22 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
   public static Vector2 bottomLeft, topRight;
+  public static float rotSpeed = 2f;
   public float speed = 0f;
-  public bool follow = false; // WIP
+  public bool follow = false;
 
   void FixedUpdate() {
+    // Follows enemies, i.e. it only works for friendly bullets
+    if(follow) {
+      GameObject target = StageHandler.instance.GetClosestEnemy(transform.position);
+      if(target != null) {
+        // Length of cross product provides rotation amount
+        float rot = Vector3.Cross(transform.up, Vector3.Normalize(target.transform.position - transform.position)).z;
+
+        transform.Rotate(Vector3.forward, rot * rotSpeed * Time.fixedDeltaTime);
+      }
+    }
+
     transform.Translate(transform.up * speed * Time.fixedDeltaTime);
 
     // Kill if out of bounds, more reliable than edge colliders

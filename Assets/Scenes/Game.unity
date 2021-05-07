@@ -964,6 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 5656344691981316538, guid: 2625e1c8b7816d04182164556b96f6e4, type: 3}
+  rotSpeed: 500
 --- !u!4 &677685557
 Transform:
   m_ObjectHideFlags: 0

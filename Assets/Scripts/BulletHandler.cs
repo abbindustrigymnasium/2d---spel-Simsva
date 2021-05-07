@@ -23,6 +23,7 @@ public class BulletHandler : MonoBehaviour {
   public static GameObject staticBullet;
 
   public GameObject bullet;
+  public float rotSpeed = 2f;
 
   void Awake() {
     staticTransform = transform;
@@ -43,6 +44,10 @@ public class BulletHandler : MonoBehaviour {
       PlayerController.instance.shotSpeed,
       true
     );
+  }
+
+  void Update() {
+    Bullet.rotSpeed = rotSpeed;
   }
 
   // Shoot one bullet

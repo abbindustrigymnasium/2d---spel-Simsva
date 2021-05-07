@@ -22,6 +22,21 @@ public class StageHandler : MonoBehaviour {
     Object.Destroy(enemy, t);
   }
 
+  public GameObject GetClosestEnemy(Vector3 pos) {
+    Transform closest = null;
+
+    foreach(Transform enemy in transform.Find("Enemies")) {
+      if(closest == null || Vector3.SqrMagnitude(enemy.position - pos) < Vector3.SqrMagnitude(closest.position - pos))
+        closest = enemy;
+    }
+
+    if(closest == null)
+      return null;
+    else
+      return closest.gameObject;
+  }
+
+  // Coroutines
   // Run several coroutines one after another
   private IEnumerator SequentialCoroutine(List<IEnumerator> routines) {
     foreach(IEnumerator routine in routines) {
