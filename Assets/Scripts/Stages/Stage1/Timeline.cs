@@ -7,17 +7,18 @@ public class Stage1Timeline : BaseTimeline {
     GameObject[] enemies = new GameObject[count];
 
     // Calculate spread of enemies
-    float distance = Mathf.Abs(stage.bottomLeft.x-stage.topRight.x)/(count+1);
+    float distance = Mathf.Abs(StageHandler.bottomLeft.x-StageHandler.topRight.x)/(count+1);
 
     for(int i = 0; i < count; i++) {
       // Spawn enemy
-      enemies[i] = stage.SpawnEnemy(
+      enemies[i] = StageHandler.SpawnEnemy(
         id,
         new Vector3(
           // Skip first "slot" (i+1)
-          stage.bottomLeft.x + (i+1)*distance,
-          stage.topRight.y+1
-        )
+          StageHandler.bottomLeft.x + (i+1)*distance,
+          StageHandler.topRight.y+1
+        ),
+        true
       );
 
       // Actions exeucted for each enemy
@@ -25,7 +26,7 @@ public class Stage1Timeline : BaseTimeline {
         MoveEnemySmooth(moveTimeMs * stopDistance/13, enemies[i], enemies[i].transform.position + stopDistance*Vector3.down),
         WaitMs(waitTimeMs),
         MoveEnemySmooth(moveTimeMs * (13-stopDistance)/13, enemies[i], enemies[i].transform.position + (13 - stopDistance)*Vector3.down),
-        KillEnemy(enemies[i])
+        DeleteEnemy(enemies[i])
       };
 
       // Pyramid formation
@@ -33,7 +34,7 @@ public class Stage1Timeline : BaseTimeline {
       //Debug.Log(distance);
 
       // Run actions for enemy asynchronously and wait
-      stage.StartSequentialCoroutine(actions, enemies[i]);
+      StageHandler.StartSequentialCoroutine(actions, enemies[i]);
       yield return new WaitForSeconds(spawnTimeMs/count / 1000);
     }
     
@@ -41,14 +42,14 @@ public class Stage1Timeline : BaseTimeline {
   }
 
   private IEnumerator Test(int id, Vector3 pos) {
-    stage.SpawnEnemy(id, pos);
+    StageHandler.SpawnEnemy(id, pos, true);
     yield return null;
   }
 
   public override void Init() {
     // Add tasks
-    //AddTask(3000, TaskBurst1(0, 6, spawnTimeMs: 3000, waitTimeMs: 250f));
-    AddTask(0, Test(0, new Vector3(-2, 0)));
+    //AddTask(0, Test(0, new Vector3(-2, 0)));
+    AddTask(3000, TaskBurst1(0, 6, spawnTimeMs: 3000, waitTimeMs: 250f));
     AddTask(5000, Log("bruh"));
     AddTask(10000, Log("yeet"));
   }

@@ -6,26 +6,38 @@ public class StageHandler : MonoBehaviour {
   public static StageHandler instance;
 
   public List<GameObject> enemies;
-  public Vector3 bottomLeft, topRight;
+  public static Vector2 bottomLeft, topRight;
 
   // Stages
   private Stage1 stage1;
 
   // Methods
+  // Check if point is inside stage
+  public static bool InStageBounds(Vector2 pos) {
+    return pos.x < topRight.x && pos.x > bottomLeft.x
+        && pos.y < topRight.y && pos.y > bottomLeft.y;
+  }
+
   // Instantiate new enemy
-  public GameObject SpawnEnemy(int id, Vector3 pos) {
-    return Instantiate(enemies[id], pos, Quaternion.identity, transform.Find("Enemies"));
+  public static GameObject SpawnEnemy(int id, Vector3 pos, bool hasAi = false) {
+    GameObject enemy = Instantiate(instance.enemies[id], pos, Quaternion.identity, instance.transform.Find("Enemies"));
+
+    enemy.GetComponent<Enemy>().hasAi = hasAi;
+    BaseAI ai = enemy.GetComponent<BaseAI>();
+    if(ai) ai.enabled = hasAi;
+
+    return enemy;
   }
 
   // Wrapper for Object.Destroy
-  public void DestroyEnemy(GameObject enemy, float t) {
+  public static void DestroyEnemy(GameObject enemy, float t) {
     Object.Destroy(enemy, t);
   }
 
-  public GameObject GetClosestEnemy(Vector3 pos) {
+  public static GameObject GetClosestEnemy(Vector3 pos) {
     Transform closest = null;
 
-    foreach(Transform enemy in transform.Find("Enemies")) {
+    foreach(Transform enemy in instance.transform.Find("Enemies")) {
       if(closest == null || Vector3.SqrMagnitude(enemy.position - pos) < Vector3.SqrMagnitude(closest.position - pos))
         closest = enemy;
     }
@@ -38,28 +50,28 @@ public class StageHandler : MonoBehaviour {
 
   // Coroutines
   // Run several coroutines one after another
-  private IEnumerator SequentialCoroutine(List<IEnumerator> routines) {
+  private static IEnumerator SequentialCoroutine(List<IEnumerator> routines) {
     foreach(IEnumerator routine in routines) {
-      yield return StartCoroutine(routine);
+      yield return instance.StartCoroutine(routine);
     }
   }
 
   // Same as SequentialCoroutine, but stops if obj gets deleted
-  private IEnumerator SequentialCoroutineObj(List<IEnumerator> routines, GameObject obj) {
+  private static IEnumerator SequentialCoroutineObj(List<IEnumerator> routines, GameObject obj) {
     foreach(IEnumerator routine in routines) {
       if(obj == null) break;
-      yield return StartCoroutine(routine);
+      yield return instance.StartCoroutine(routine);
     }
   }
 
   // Void wrapper for SequantialCoroutine
-  public void StartSequentialCoroutine(List<IEnumerator> routines) {
-    StartCoroutine(SequentialCoroutine(routines));
+  public static void StartSequentialCoroutine(List<IEnumerator> routines) {
+    instance.StartCoroutine(SequentialCoroutine(routines));
   }
 
   // Void wrapper for SequantialCoroutineObj
-  public void StartSequentialCoroutine(List<IEnumerator> routines, GameObject requiredObject) {
-    StartCoroutine(SequentialCoroutineObj(routines, requiredObject));
+  public static void StartSequentialCoroutine(List<IEnumerator> routines, GameObject requiredObject) {
+    instance.StartCoroutine(SequentialCoroutineObj(routines, requiredObject));
   }
 
   void Awake() {
@@ -69,6 +81,7 @@ public class StageHandler : MonoBehaviour {
   }
 
   void Start() {
+    // Stage bounds
     bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(32, 16, 0));
     topRight   = Camera.main.ScreenToWorldPoint(new Vector3(32 + 384, 16 + 448, 0));
 

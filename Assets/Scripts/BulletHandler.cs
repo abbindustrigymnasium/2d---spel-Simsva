@@ -31,14 +31,10 @@ public class BulletHandler : MonoBehaviour {
   }
 
   void Start() {
-    // Bullet bounds
-    Bullet.bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(32, 16, 0));
-    Bullet.topRight   = Camera.main.ScreenToWorldPoint(new Vector3(32 + 384, 16 + 448, 0));
-
     // Orbs
     Orb.bulletData = new BulletData(
       Vector3.zero,
-      0f,
+      90f,
       true,
       Color.blue,
       PlayerController.instance.shotSpeed,

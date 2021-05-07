@@ -17,8 +17,6 @@ public class BaseTimeline {
   // List of tasks in timeline (must be in chronological order)
   protected List<Task> tasks = new List<Task>();
 
-  protected StageHandler stage = StageHandler.instance;
-
   // Useful IEnumerators
   protected IEnumerator Log(string text) {
     Debug.Log(text);
@@ -30,8 +28,8 @@ public class BaseTimeline {
     yield return new WaitForSeconds(ms/1000f);
   }
 
-  protected IEnumerator KillEnemy(GameObject enemy, float t = 0f) {
-    stage.DestroyEnemy(enemy, t);
+  protected IEnumerator DeleteEnemy(GameObject enemy, float t = 0f) {
+    StageHandler.DestroyEnemy(enemy, t);
     yield return null;
   }
 
@@ -81,8 +79,7 @@ public class BaseTimeline {
       if(delay > 0)
         yield return new WaitForSeconds(delay/1000f);
 
-      //runTask.Invoke(task.task);
-      stage.StartCoroutine(task.task);
+      StageHandler.instance.StartCoroutine(task.task);
     }
   }
 

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
@@ -20,7 +19,9 @@ public class PlayerController : MonoBehaviour {
   private bool focus, shooting;
 
   // Shooting
-  public float firerate, shotSpeed, damage;
+  public float firerate, shotSpeed;
+  [HideInInspector]
+  public float damage;
   private int orbs;
   private float nextFire;
   private BulletData bulletData;
@@ -87,7 +88,7 @@ public class PlayerController : MonoBehaviour {
 
     power = newPower;
     Score.UpdatePower(newPower);
-    damage = Mathf.Lerp(1f, 5f, newPower);
+    damage = Mathf.Lerp(1f, 5f, newPower/5);
 
     UpdateOrb(Mathf.Clamp(Mathf.FloorToInt(newPower), 0, 4));
   }
@@ -97,17 +98,17 @@ public class PlayerController : MonoBehaviour {
     switch(Mathf.FloorToInt(power)) {
     case 0:
     case 1:
-      BulletHandler.ShootSplit(data, 1f, 2);
+      BulletHandler.ShootSplit(data, 3f, 2);
       break;
     case 2:
     case 3:
       BulletHandler.ShootSplit(data, 3f, 3);
       break;
     case 4:
-      BulletHandler.ShootSplit(data, 2f, 3);
+      BulletHandler.ShootSplit(data, 4f, 3);
       break;
     default:
-      BulletHandler.ShootSplit(data, 3f, 4);
+      BulletHandler.ShootSplit(data, 4f, 4);
       break;
     }
 
@@ -145,7 +146,7 @@ public class PlayerController : MonoBehaviour {
     // Default bullet data
     bulletData = new BulletData(
       Vector3.zero,
-      0f,
+      90f,
       true,
       Color.red,
       shotSpeed
@@ -207,7 +208,7 @@ public class PlayerController : MonoBehaviour {
   }
 
   void OnTriggerEnter2D(Collider2D collider) {
-    if(collider.gameObject.tag == "Enemy")
+    if(collider.CompareTag("Enemy"))
       Die();
   }
 }
