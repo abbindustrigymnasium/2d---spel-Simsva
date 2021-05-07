@@ -25,11 +25,24 @@ public class BaseTimeline {
     yield return null;
   }
 
+  // Used in List<IEnumerator> instead of WaitForSeconds because of type
+  protected IEnumerator WaitMs(float ms) {
+    yield return new WaitForSeconds(ms/1000f);
+  }
+
+  protected IEnumerator KillEnemy(GameObject enemy, float t = 0f) {
+    stage.DestroyEnemy(enemy, t);
+    yield return null;
+  }
+
   protected IEnumerator MoveEnemy(float timeMs, GameObject enemy, Vector3 endPos) {
     Vector3 startPos = enemy.transform.position;
     float startTime = 0;
 
     while(startTime < timeMs/1000) {
+      // Break if enemy is killed
+      if(enemy == null) yield break;
+
       enemy.transform.position = Vector3.Lerp(startPos, endPos, startTime/(timeMs/1000));
       startTime += Time.deltaTime;
       yield return null;
@@ -42,6 +55,8 @@ public class BaseTimeline {
     float startTime = 0;
 
     while(startTime < timeMs/1000) {
+      if(enemy == null) yield break;
+
       enemy.transform.position = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, startTime/(timeMs/1000)));
       startTime += Time.deltaTime;
       yield return null;
