@@ -10,12 +10,13 @@ public class MusicHandler : MonoBehaviour {
 
   public List<AudioClip> songs;
   public TMP_Text bgmPopup;
+  public int defaultSong = -1;
 
   public static void StopSong() {
     instance.audioSource.Stop();
   }
 
-  public static void PlaySong(int id) {
+  public static void PlaySong(int id, bool popup = true) {
     if(id < 0 || id >= instance.songs.Capacity) {
       Debug.LogError("Song " + id.ToString() + " is out of range!");
     }
@@ -24,7 +25,8 @@ public class MusicHandler : MonoBehaviour {
     instance.audioSource.clip = instance.songs[id];
     instance.audioSource.Play();
 
-    instance.StartCoroutine(BgmPopup("BGM: " + instance.songs[id].name, 3f, .5f));
+    if(popup && instance.bgmPopup != null)
+      instance.StartCoroutine(BgmPopup("BGM: " + instance.songs[id].name, 3f, .5f));
   }
 
   private static IEnumerator BgmPopup(string text, float time, float fadeTime) {
@@ -67,7 +69,12 @@ public class MusicHandler : MonoBehaviour {
   }
 
   void Start() {
-    bgmPopup.enabled = false;
-    bgmPopup.alpha = 0f;
+    if(bgmPopup != null) {
+      bgmPopup.enabled = false;
+      bgmPopup.alpha = 0f;
+    }
+
+    if(defaultSong >= 0 && defaultSong < songs.Capacity)
+      PlaySong(defaultSong, false);
   }
 }

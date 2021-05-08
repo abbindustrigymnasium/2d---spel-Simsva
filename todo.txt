@@ -5,14 +5,17 @@ Stage 1
 
 	Planned
 !Circle Fairies or whatever
-Main Menu
 Sound effects
 EnemyHandler class (maybe integrate with StageHandler)
 BezierMove task
-?BGM Popup
 ?Options
 ?Music Room
 ?Save HiScore to file
+?Stage "All Clear!" screen
+
+
+	Bugs
+Pressing with mouse on main menu deselects all buttons
 
 	Done
 UI
@@ -24,3 +27,5 @@ Homing bullets
 !Enemy AI
 Enemy drops
 Music
+?BGM Popup
+Main Menu
