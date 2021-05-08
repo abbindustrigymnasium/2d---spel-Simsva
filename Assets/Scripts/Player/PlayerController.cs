@@ -94,6 +94,9 @@ public class PlayerController : MonoBehaviour {
     StartCoroutine(Invincibility(3f));
     transform.position = startPos;
 
+    // Kill bullets
+    BulletHandler.BulletsToScore();
+
     if(lives > 0) {
       lives--;
       Score.UpdatePlayer(lives);
