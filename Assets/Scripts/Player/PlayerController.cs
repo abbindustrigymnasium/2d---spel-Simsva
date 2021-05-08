@@ -35,13 +35,19 @@ public class PlayerController : MonoBehaviour {
   public float testPower;
 
   // Reset score, lives, etc. to default
-  void ResetScore(int startLives = 2, int startBombs = 3) {
+  void ResetStats(int startLives = 2, int startBombs = 3) {
     score = 0; hiScore = 0;
     lives = startLives; bombs = startBombs;
-    ChangePower(0f);
+    ChangePower(1f);
     
     Score.UpdateScore(score); Score.UpdateHiScore(hiScore);
     Score.UpdatePlayer(lives); Score.UpdateBombs(bombs);
+
+    // Position 1 unit above bottom center
+    transform.position = new Vector3(
+      (StageHandler.bottomLeft.x + StageHandler.topRight.x)/2,
+      StageHandler.bottomLeft.y + 1
+    );
   }
 
   // Actions
@@ -82,7 +88,7 @@ public class PlayerController : MonoBehaviour {
   }
 
   // Update power value
-  void ChangePower(float newPower) {
+  public void ChangePower(float newPower) {
     newPower = Mathf.Clamp(newPower, 0f, 5f);
     testPower = newPower; // Remove
 
@@ -91,6 +97,12 @@ public class PlayerController : MonoBehaviour {
     damage = Mathf.Lerp(1f, 5f, newPower/5);
 
     UpdateOrb(Mathf.Clamp(Mathf.FloorToInt(newPower), 0, 4));
+  }
+
+  // Add to score
+  public void AddScore(uint scoreChange) {
+    score += scoreChange;
+    Score.UpdateScore(score);
   }
 
   // Shoot
@@ -134,7 +146,15 @@ public class PlayerController : MonoBehaviour {
   }
 
   void Start() {
-    ResetScore();
+    // Initialize orbs
+    for(int i = 0; i < 4; i++) {
+      GameObject orb = Instantiate(orbPrefab, transform.Find("Orbs"));
+      orb.SetActive(false);
+      orb.GetComponent<Orb>().id = i;
+      orb.name = "Orb" + i.ToString();
+    }
+
+    ResetStats();
 
     // Movement bounds (requires camera scale 4.8f because reasons)
     Vector3 bottomLeftWorld = Camera.main.ScreenToWorldPoint(new Vector3(32 + 11, 16 + 23, 0)); //Camera.main.ViewportToWorldPoint(new Vector3( 1f/20,  1f/30, 0f));
@@ -151,14 +171,6 @@ public class PlayerController : MonoBehaviour {
       Color.red,
       shotSpeed
     );
-
-    // Initialize orbs
-    for(int i = 0; i < 4; i++) {
-      GameObject orb = Instantiate(orbPrefab, transform.Find("Orbs"));
-      orb.SetActive(false);
-      orb.GetComponent<Orb>().id = i;
-      orb.name = "Orb" + i.ToString();
-    }
   }
 
   void Update() {
@@ -208,7 +220,24 @@ public class PlayerController : MonoBehaviour {
   }
 
   void OnTriggerEnter2D(Collider2D collider) {
-    if(collider.CompareTag("Enemy"))
+    if(collider.CompareTag("Enemy")) {
       Die();
+    } else if(collider.CompareTag("Pickup")) {
+      Pickup pickup = collider.GetComponent<Pickup>();
+
+      // Don't collect already collected pickups (collection line)
+      if(!pickup.collected) {
+        switch(pickup.type) {
+        case PickupType.Point:
+          score += (uint)(pickup.value * pickup.GetScore());
+          Score.UpdateScore(score);
+          break;
+
+        case PickupType.Power:
+          ChangePower(power + 0.03f * pickup.value);
+          break;
+        }
+      }
+    }
   }
 }

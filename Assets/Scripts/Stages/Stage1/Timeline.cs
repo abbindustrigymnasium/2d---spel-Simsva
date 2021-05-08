@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Stage1Timeline : BaseTimeline {
-  private IEnumerator TaskBurst1(int id, int count, float spawnTimeMs = 1000f, float moveTimeMs = 10000f, float waitTimeMs = 200f, float stopDistance = 2f) {
+  private IEnumerator TaskBurst1(int id, int count, float spawnTimeMs = 1000f, float moveTimeMs = 10000f, float waitTimeMs = 200f, float stopDistance = 2f, bool reverse = false) {
     GameObject[] enemies = new GameObject[count];
 
     // Calculate spread of enemies
@@ -11,15 +11,22 @@ public class Stage1Timeline : BaseTimeline {
 
     for(int i = 0; i < count; i++) {
       // Spawn enemy
-      enemies[i] = StageHandler.SpawnEnemy(
-        id,
-        new Vector3(
+      Vector3 pos;
+      if(reverse) {
+        pos = new Vector3(
+          // Skip first "slot" (count-i)
+          StageHandler.bottomLeft.x + (count-i)*distance,
+          StageHandler.topRight.y+1
+        );
+      } else {
+        pos = new Vector3(
           // Skip first "slot" (i+1)
           StageHandler.bottomLeft.x + (i+1)*distance,
           StageHandler.topRight.y+1
-        ),
-        true
-      );
+        );
+      }
+
+      enemies[i] = StageHandler.SpawnEnemy(id, pos, true);
 
       // Actions exeucted for each enemy
       List<IEnumerator> actions = new List<IEnumerator>() {
@@ -49,7 +56,8 @@ public class Stage1Timeline : BaseTimeline {
   public override void Init() {
     // Add tasks
     //AddTask(0, Test(0, new Vector3(-2, 0)));
-    AddTask(3000, TaskBurst1(0, 6, spawnTimeMs: 3000, waitTimeMs: 250f));
+    AddTask(3000, TaskBurst1(0, 3, spawnTimeMs: 2500, waitTimeMs: 250f, stopDistance: 3f));
+    AddTask(6500, TaskBurst1(1, 2, spawnTimeMs: 1500, waitTimeMs: 200f, stopDistance: 2f, reverse: true));
     AddTask(5000, Log("bruh"));
     AddTask(10000, Log("yeet"));
   }

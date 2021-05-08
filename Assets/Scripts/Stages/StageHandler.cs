@@ -5,7 +5,7 @@ using UnityEngine;
 public class StageHandler : MonoBehaviour {
   public static StageHandler instance;
 
-  public List<GameObject> enemies;
+  public List<GameObject> enemies, pickups;
   public static Vector2 bottomLeft, topRight;
 
   // Stages
@@ -19,14 +19,22 @@ public class StageHandler : MonoBehaviour {
   }
 
   // Instantiate new enemy
-  public static GameObject SpawnEnemy(int id, Vector3 pos, bool hasAi = false) {
+  public static GameObject SpawnEnemy(int id, Vector3 pos, bool hasAi = false, float hpOverride = -1f) {
     GameObject enemy = Instantiate(instance.enemies[id], pos, Quaternion.identity, instance.transform.Find("Enemies"));
 
     enemy.GetComponent<Enemy>().hasAi = hasAi;
     BaseAI ai = enemy.GetComponent<BaseAI>();
     if(ai) ai.enabled = hasAi;
+    if(hpOverride > 0f) enemy.GetComponent<Enemy>().hp = hpOverride;
 
     return enemy;
+  }
+
+  // Instantiate new pickup
+  public static GameObject SpawnPickup(int id, Vector3 pos, int valueOverride = -1) {
+    GameObject pickup = Instantiate(instance.pickups[id], pos, Quaternion.identity, instance.transform.Find("Pickups"));
+    if(valueOverride > 0) pickup.GetComponent<Pickup>().value = valueOverride;
+    return pickup;
   }
 
   // Wrapper for Object.Destroy
@@ -85,6 +93,10 @@ public class StageHandler : MonoBehaviour {
     bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(32, 16, 0));
     topRight   = Camera.main.ScreenToWorldPoint(new Vector3(32 + 384, 16 + 448, 0));
 
+    // Pickup dropSpeed
+    Pickup.dropSpeed = 1f;
+
+    // Start stage 1
     stage1.StartStage();
   }
 }

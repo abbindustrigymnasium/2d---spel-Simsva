@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct BulletData {
@@ -7,27 +8,27 @@ public struct BulletData {
   public Color color;
   public float velocity;
   public bool follow;
+  public int id;
 
-  public BulletData(Vector3 pos, float rot, bool friendly, Color color, float velocity, bool follow = false) {
+  public BulletData(Vector3 pos, float rot, bool friendly, Color color, float velocity, bool follow = false, int id = 0) {
     this.pos = pos;
     this.rot = rot;
     this.friendly = friendly;
     this.color = color;
     this.velocity = velocity;
     this.follow = follow;
+    this.id = id;
   }
 }
 
 public class BulletHandler : MonoBehaviour {
-  private static Transform staticTransform;
-  public static GameObject staticBullet;
+  public static BulletHandler instance; 
 
-  public GameObject bullet;
+  public List<GameObject> bullets;
   public float rotSpeed = 2f;
 
   void Awake() {
-    staticTransform = transform;
-    staticBullet = bullet;
+    instance = this;
   }
 
   void Start() {
@@ -48,7 +49,7 @@ public class BulletHandler : MonoBehaviour {
 
   // Shoot one bullet
   public static void ShootBullet(BulletData data) {
-    GameObject newBullet = Instantiate(staticBullet, data.pos, Quaternion.AngleAxis(data.rot, Vector3.forward), staticTransform);
+    GameObject newBullet = Instantiate(instance.bullets[data.id], data.pos, Quaternion.AngleAxis(data.rot, Vector3.forward), instance.transform);
     newBullet.GetComponent<SpriteRenderer>().color = data.color;
     newBullet.tag = data.friendly ? "Friendly" : "Enemy";
 
@@ -72,10 +73,10 @@ public class BulletHandler : MonoBehaviour {
   //  0x1 - Kill enemy bullets
   //  0x2 - Kill friendly bullets
   public static void KillAllBullets(byte mode) {
-    GameObject[] children = new GameObject[staticTransform.childCount];
+    GameObject[] children = new GameObject[instance.transform.childCount];
 
     int i = 0;
-    foreach(Transform child in staticTransform) {
+    foreach(Transform child in instance.transform) {
       if(((mode & 0x1) != 0 && child.CompareTag("Enemy"))
       || ((mode & 0x2) != 0 && child.CompareTag("Friendly"))) {
         children[i] = child.gameObject;

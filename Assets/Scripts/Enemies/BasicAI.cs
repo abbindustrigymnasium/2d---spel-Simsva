@@ -1,6 +1,8 @@
 using UnityEngine;
 
 public class BasicAI : BaseAI {
+  public float shotSpeed = 4f;
+
   void Start() {
     bulletData = new BulletData(
       Vector3.zero,
