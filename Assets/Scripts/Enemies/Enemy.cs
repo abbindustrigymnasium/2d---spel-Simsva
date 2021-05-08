@@ -56,7 +56,8 @@ public class Enemy : MonoBehaviour {
   }
 
   void OnTriggerEnter2D(Collider2D collider) {
-    if(collider.CompareTag("Friendly")) {
+    // Only take damage when on-screen
+    if(collider.CompareTag("Friendly") && StageHandler.InStageBounds(transform.position)) {
       TakeDamage(PlayerController.instance.damage);
     }
   }
