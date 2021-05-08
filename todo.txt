@@ -1,0 +1,26 @@
+thxx todo
+
+	Doing
+Stage 1
+
+	Planned
+!Circle Fairies or whatever
+Main Menu
+Sound effects
+EnemyHandler class (maybe integrate with StageHandler)
+BezierMove task
+?BGM Popup
+?Options
+?Music Room
+?Save HiScore to file
+
+	Done
+UI
+!Movement
+!Shooting
+Orbs
+!Stage/Task system
+Homing bullets
+!Enemy AI
+Enemy drops
+Music

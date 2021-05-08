@@ -62,6 +62,18 @@ public class BaseTimeline {
     enemy.transform.position = endPos;
   }
 
+  // Play background music
+  protected IEnumerator PlaySong(int id) {
+    MusicHandler.PlaySong(id);
+    yield return null;
+  }
+
+  // Stop background music
+  protected IEnumerator StopSong() {
+    MusicHandler.StopSong();
+    yield return null;
+  }
+
   // Add task to list
   protected void AddTask(int timeMs, IEnumerator task) {
     tasks.Add(new Task(timeMs, task));

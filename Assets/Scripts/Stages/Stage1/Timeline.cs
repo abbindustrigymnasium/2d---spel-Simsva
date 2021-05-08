@@ -14,7 +14,7 @@ public class Stage1Timeline : BaseTimeline {
       Vector3 pos;
       if(reverse) {
         pos = new Vector3(
-          // Skip first "slot" (count-i)
+          // Skip last "slot" (count-i)
           StageHandler.bottomLeft.x + (count-i)*distance,
           StageHandler.topRight.y+1
         );
@@ -48,14 +48,9 @@ public class Stage1Timeline : BaseTimeline {
     yield return null;
   }
 
-  private IEnumerator Test(int id, Vector3 pos) {
-    StageHandler.SpawnEnemy(id, pos, true);
-    yield return null;
-  }
-
   public override void Init() {
     // Add tasks
-    //AddTask(0, Test(0, new Vector3(-2, 0)));
+    AddTask(0, PlaySong(1)); // Play "A Soul as Red as a Ground Cherry"
     AddTask(3000, TaskBurst1(0, 3, spawnTimeMs: 2500, waitTimeMs: 250f, stopDistance: 3f));
     AddTask(6500, TaskBurst1(1, 2, spawnTimeMs: 1500, waitTimeMs: 200f, stopDistance: 2f, reverse: true));
     AddTask(5000, Log("bruh"));
