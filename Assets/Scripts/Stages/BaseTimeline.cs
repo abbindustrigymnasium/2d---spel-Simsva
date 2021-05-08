@@ -59,7 +59,8 @@ public class BaseTimeline {
       startTime += Time.deltaTime;
       yield return null;
     }
-    enemy.transform.position = endPos;
+    if(enemy != null)
+      enemy.transform.position = endPos;
   }
 
   // Play background music

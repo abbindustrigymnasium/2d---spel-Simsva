@@ -245,6 +245,7 @@ MonoBehaviour:
   - {fileID: 187462502590255381, guid: 240f99b5e3367524e85325893da370a1, type: 3}
   - {fileID: 8378087996095511251, guid: c585acb3531edd84194b1f9c3918545b, type: 3}
   - {fileID: 2703754727360514137, guid: e960a2af424e02d4b812c536cf3749fb, type: 3}
+  - {fileID: 7326413460572787168, guid: 0f71381f404cd28459cebd134f4cc0e1, type: 3}
 --- !u!114 &189693864
 MonoBehaviour:
   m_ObjectHideFlags: 0

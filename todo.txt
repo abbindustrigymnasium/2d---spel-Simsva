@@ -6,13 +6,15 @@ Stage 1
 	Planned
 !Circle Fairies or whatever
 Sound effects
+Bomb visuals
+Death visuals
 EnemyHandler class (maybe integrate with StageHandler)
 BezierMove task
 ?Options
 ?Music Room
 ?Save HiScore to file
 ?Stage "All Clear!" screen
-
+?Console commands
 
 	Bugs
 Pressing with mouse on main menu deselects all buttons
@@ -29,3 +31,5 @@ Enemy drops
 Music
 ?BGM Popup
 Main Menu
+Bombs
+Player Death

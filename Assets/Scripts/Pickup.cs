@@ -7,14 +7,14 @@ public enum PickupType {
 
 public class Pickup : MonoBehaviour {
   public static float dropSpeed = 1f;
-  public int value = 0;
+  public float value = 0;
   public PickupType type = 0;
-  // Used to save the y position score when above the collection line
+  // Used to save the y position score when above the collection line (or for constant value)
   public float fixedScore = 0f;
 
   // Calculates score from the y position of the pickup
-  public int GetScore() {
-    return Mathf.RoundToInt(Mathf.Lerp(1500, 10000, (transform.position.y - StageHandler.bottomLeft.y) / (StageHandler.topRight.y - StageHandler.bottomLeft.y)));
+  public float GetScore() {
+    return Mathf.Lerp(1500, 10000, (transform.position.y - StageHandler.bottomLeft.y) / (StageHandler.topRight.y - StageHandler.bottomLeft.y));
   }
 
   void FixedUpdate() {

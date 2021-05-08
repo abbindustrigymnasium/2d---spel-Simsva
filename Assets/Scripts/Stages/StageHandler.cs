@@ -38,12 +38,14 @@ public class StageHandler : MonoBehaviour {
   }
 
   // Sends all pickups to player
-  public static void CollectAllPickups() {
+  public static void CollectAllPickups(bool useConstantScore = false) {
     foreach(Transform pickup in instance.transform.Find("Pickups")) {
       Pickup pickupScript = pickup.GetComponent<Pickup>();
 
-      // Set a fixed score multiplier for the original position
-      pickupScript.fixedScore = pickupScript.GetScore();
+      // Get a fixed score multiplier from the original position
+      // useConstantScore uses the default fixedScore of the pickup
+      if(!useConstantScore)
+        pickupScript.fixedScore = pickupScript.GetScore();
 
       instance.StartCoroutine(MoveToPlayer(pickup.gameObject, .3f));
     }
@@ -52,6 +54,13 @@ public class StageHandler : MonoBehaviour {
   // Wrapper for Object.Destroy
   public static void DestroyEnemy(GameObject enemy, float t) {
     Object.Destroy(enemy, t);
+  }
+
+  // Kill all enemies and drop pickups
+  public static void KillAllEnemies() {
+    foreach(Transform enemy in instance.transform.Find("Enemies")) {
+      enemy.gameObject.GetComponent<Enemy>().Die();
+    }
   }
 
   public static GameObject GetClosestEnemy(Vector3 pos) {

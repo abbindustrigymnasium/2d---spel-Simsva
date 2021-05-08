@@ -72,6 +72,7 @@ public class BulletHandler : MonoBehaviour {
   // Mode flags:
   //  0x1 - Kill enemy bullets
   //  0x2 - Kill friendly bullets
+  // Make console command?
   public static void KillAllBullets(byte mode) {
     GameObject[] children = new GameObject[instance.transform.childCount];
 
@@ -84,8 +85,29 @@ public class BulletHandler : MonoBehaviour {
       }
     }
 
+    // Can't destroy bullets while looping through them
     foreach(GameObject child in children) {
       Destroy(child);
+    }
+  }
+
+  // Turn all bullets to score pickups (for bombs, spell cards, etc.)
+  public static void BulletsToScore() {
+    GameObject[] bullets = new GameObject[instance.transform.childCount];
+
+    int i = 0;
+    foreach(Transform bullet in instance.transform) {
+      if(bullet.CompareTag("Enemy")) {
+        bullets[i] = bullet.gameObject;
+        i++;
+
+        StageHandler.SpawnPickup(4, bullet.position);
+      }
+    }
+
+    // Can't destroy bullets while looping through them
+    foreach(GameObject bullet in bullets) {
+      Destroy(bullet);
     }
   }
 }

@@ -25,8 +25,8 @@ public class MenuButtons : MonoBehaviour {
     btnColors.pressedColor      = Color.HSVToRGB(0f, 0f, .7f);
     btnColors.selectedColor     = Color.HSVToRGB(0f, 0f, 1f);
     btnColors.disabledColor     = Color.HSVToRGB(0f, 0f, .3f);
-    btnColors.colorMultiplier = 1f;
-    btnColors.fadeDuration = .1f;
+    btnColors.colorMultiplier   = 1f;
+    btnColors.fadeDuration      = .1f;
 
     foreach(Transform btnTransform in transform) {
       Button btn = btnTransform.GetComponent<Button>();

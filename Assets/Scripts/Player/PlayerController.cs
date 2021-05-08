@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
@@ -7,7 +8,7 @@ public class PlayerController : MonoBehaviour {
   private Rigidbody2D rb;
   private CircleCollider2D collider2d;
   private Animator anim;
-  private SpriteRenderer focusHitbox;
+  private SpriteRenderer sprite, focusHitbox;
 
   // Prefabs
   public GameObject orbPrefab;
@@ -17,11 +18,13 @@ public class PlayerController : MonoBehaviour {
   private Vector2 movement;
   private Vector2 movementRangeMin, movementRangeMax;
   private bool focus, shooting;
+  private Vector2 startPos;
 
   // Shooting
   public float firerate, shotSpeed;
   [HideInInspector]
   public float damage;
+  private bool invincible = false;
   private int orbs;
   private float nextFire;
   private BulletData bulletData;
@@ -37,23 +40,60 @@ public class PlayerController : MonoBehaviour {
   public float testPower;
 
   // Reset score, lives, etc. to default
-  void ResetStats(int startLives = 2, int startBombs = 3) {
+  private void ResetStats(int startLives = 2, int startBombs = 3) {
+    // Reset variables
     score = 0; hiScore = 0;
     lives = startLives; bombs = startBombs;
     ChangePower(1f);
     
-    Score.UpdateScore(score); Score.UpdateHiScore(hiScore);
+    // Update UI
+    Score.UpdateScore(score);  Score.UpdateHiScore(hiScore);
     Score.UpdatePlayer(lives); Score.UpdateBombs(bombs);
 
-    // Position 1 unit above bottom center
-    transform.position = new Vector3(
-      (StageHandler.bottomLeft.x + StageHandler.topRight.x)/2,
-      StageHandler.bottomLeft.y + 1
-    );
+    // Reset position
+    transform.position = startPos;
+  }
+
+  // Become invincivle for time seconds
+  private IEnumerator Invincibility(float time) {
+    invincible = true;
+    sprite.color = new Color(1f, 1f, 1f, .8f);
+    yield return new WaitForSeconds(time);
+    invincible = false;
+    sprite.color = new Color(1f, 1f, 1f, 1f);
+  }
+
+  private void DropPower(float amount) {
+    // Calculate number of big and small pickups needed
+    // Large pickup = .12 power, small pickup = .03 power
+    // TODO: Get pickup values in Start()?
+    int bigPickup = Mathf.FloorToInt(amount/.12f);
+    int smallPickup = Mathf.FloorToInt((amount-.12f*bigPickup)/.03f);
+
+    // Spawn pickups above player
+    while(smallPickup > 0 && bigPickup > 0) {
+      if(smallPickup > 0) {
+        StageHandler.SpawnPickup(1, (Vector3)Random.insideUnitCircle + transform.position + Vector3.up);
+        smallPickup--;
+      }
+      if(bigPickup > 0) {
+        StageHandler.SpawnPickup(3, (Vector3)Random.insideUnitCircle + transform.position + Vector3.up);
+        bigPickup--;
+      }
+    }
   }
 
   // Actions
-  void Die() {
+  private void Die() {
+    // Lose 35% of power and drop 30%
+    // Drops power above death position
+    DropPower(power * 0.30f);
+    ChangePower(power * 0.65f);
+
+    // Move to spawn and become invincible
+    StartCoroutine(Invincibility(3f));
+    transform.position = startPos;
+
     if(lives > 0) {
       lives--;
       Score.UpdatePlayer(lives);
@@ -62,19 +102,21 @@ public class PlayerController : MonoBehaviour {
     }
   }
 
-  void Bomb() {
-    Debug.Log("Bomb");
-
+  private void Bomb() {
     if(bombs > 0) {
       bombs--;
       Score.UpdateBombs(bombs);
 
-      BulletHandler.KillAllBullets(1);
+      // Kill all enemies and convert all enemy bullets to score pickups, then collect them
+      // TODO: Shake effect + visuals
+      BulletHandler.BulletsToScore();
+      StageHandler.KillAllEnemies();
+      StageHandler.CollectAllPickups(useConstantScore: true);
     }
   }
 
   // Add/remove orbs
-  void UpdateOrb(int newOrbs) {
+  private void UpdateOrb(int newOrbs) {
     newOrbs = Mathf.Clamp(newOrbs, 0, 4);
     if(orbs != newOrbs) {
       orbs = newOrbs;
@@ -113,7 +155,7 @@ public class PlayerController : MonoBehaviour {
   }
 
   // Shoot
-  void HandleShot(BulletData data, float power) {
+  private void HandleShot(BulletData data, float power) {
     switch(Mathf.FloorToInt(power)) {
     case 0:
     case 1:
@@ -145,6 +187,7 @@ public class PlayerController : MonoBehaviour {
     rb = GetComponent<Rigidbody2D>();
     collider2d = GetComponent<CircleCollider2D>();
     anim = GetComponent<Animator>();
+    sprite = GetComponent<SpriteRenderer>();
     focusHitbox = transform.Find("FocusHitbox").GetComponent<SpriteRenderer>();
 
     // Default firerate
@@ -160,6 +203,12 @@ public class PlayerController : MonoBehaviour {
       orb.GetComponent<Orb>().id = i;
       orb.name = "Orb" + i.ToString();
     }
+
+    // Set spawn position 1 unit above the bottom center of the stage
+    startPos = new Vector3(
+      (StageHandler.bottomLeft.x + StageHandler.topRight.x)/2,
+      StageHandler.bottomLeft.y + 1
+    );
 
     ResetStats();
 
@@ -236,14 +285,18 @@ public class PlayerController : MonoBehaviour {
 
   void OnTriggerEnter2D(Collider2D collider) {
     if(collider.CompareTag("Enemy")) {
-      Die();
+      if(!invincible)
+        Die();
     } else if(collider.CompareTag("Pickup")) {
       Pickup pickup = collider.GetComponent<Pickup>();
 
       switch(pickup.type) {
       case PickupType.Point:
         float multiplier = (pickup.fixedScore == 0) ? pickup.GetScore() : pickup.fixedScore;
-        AddScore((uint)(pickup.value * multiplier));
+        uint score = (uint)Mathf.RoundToInt(pickup.value * multiplier);
+
+        Debug.Log(score);
+        AddScore(score);
         break;
 
       case PickupType.Power:

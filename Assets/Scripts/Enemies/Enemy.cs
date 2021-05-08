@@ -8,23 +8,27 @@ public class Enemy : MonoBehaviour {
   public bool hasAi;
   private bool dead = false;
 
+  public void Die() {
+    // Don't accidentally spawn multiple pickups
+    if(!dead) {
+      dead = true;
+
+      // Spawn pickups
+      for(int i = 0; i < scoreValue; i++) {
+        StageHandler.SpawnPickup(0, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f);
+      }
+      for(int i = 0; i < powerValue; i++) {
+        StageHandler.SpawnPickup(1, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f);
+      }
+
+      // Destroy object
+      Destroy(gameObject);
+    }
+  }
+
   private void TakeDamage(float damage) {
     if(hp < damage) {
-      // Don't accidentally spawn multiple pickups
-      if(!dead) {
-        dead = true;
-
-        // Spawn pickups
-        for(int i = 0; i < scoreValue; i++) {
-          StageHandler.SpawnPickup(0, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f);
-        }
-        for(int i = 0; i < powerValue; i++) {
-          StageHandler.SpawnPickup(1, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f);
-        }
-
-        // Destroy object
-        Object.Destroy(gameObject);
-      }
+      Die();
     } else {
       hp -= damage;
 
