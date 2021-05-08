@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour {
   private BulletData bulletData;
 
   // Score
+  public float collectionLine = .8f;
+  private float collectionLineY;
   private uint score, hiScore; // TODO: Move hiScore to external file 
   private int lives, bombs;
   private float power;
@@ -103,6 +105,11 @@ public class PlayerController : MonoBehaviour {
   public void AddScore(uint scoreChange) {
     score += scoreChange;
     Score.UpdateScore(score);
+
+    if(score > hiScore) {
+      hiScore = score;
+      Score.UpdateHiScore(hiScore);
+    }
   }
 
   // Shoot
@@ -171,6 +178,9 @@ public class PlayerController : MonoBehaviour {
       Color.red,
       shotSpeed
     );
+
+    // Calculate collection line y
+    collectionLineY = collectionLine*(StageHandler.topRight.y - StageHandler.bottomLeft.y) + StageHandler.bottomLeft.y;
   }
 
   void Update() {
@@ -187,6 +197,7 @@ public class PlayerController : MonoBehaviour {
     if(Input.GetButtonDown("Bomb"))
       Bomb();
 
+    // Movement
     movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
     movement.Normalize(); movement *= focus ? focusMovementSpeed : movementSpeed;
 
@@ -217,6 +228,10 @@ public class PlayerController : MonoBehaviour {
 
       nextFire += 1/firerate; // TODO: Change to firedelay
     }
+
+    // Collect all pickups if above collection line
+    if(transform.position.y > collectionLineY)
+      StageHandler.CollectAllPickups();
   }
 
   void OnTriggerEnter2D(Collider2D collider) {
@@ -225,18 +240,15 @@ public class PlayerController : MonoBehaviour {
     } else if(collider.CompareTag("Pickup")) {
       Pickup pickup = collider.GetComponent<Pickup>();
 
-      // Don't collect already collected pickups (collection line)
-      if(!pickup.collected) {
-        switch(pickup.type) {
-        case PickupType.Point:
-          score += (uint)(pickup.value * pickup.GetScore());
-          Score.UpdateScore(score);
-          break;
+      switch(pickup.type) {
+      case PickupType.Point:
+        float multiplier = (pickup.fixedScore == 0) ? pickup.GetScore() : pickup.fixedScore;
+        AddScore((uint)(pickup.value * multiplier));
+        break;
 
-        case PickupType.Power:
-          ChangePower(power + 0.03f * pickup.value);
-          break;
-        }
+      case PickupType.Power:
+        ChangePower(power + 0.03f * pickup.value);
+        break;
       }
     }
   }

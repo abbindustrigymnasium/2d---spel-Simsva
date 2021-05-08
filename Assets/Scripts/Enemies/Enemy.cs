@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour {
     } else {
       hp -= damage;
 
-      PlayerController.instance.AddScore((uint)Mathf.RoundToInt(damage * 10));
+      PlayerController.instance.AddScore((uint)Mathf.RoundToInt(damage * 25));
     }
   }
 

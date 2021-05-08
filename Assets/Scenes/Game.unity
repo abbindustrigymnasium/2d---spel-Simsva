@@ -1458,7 +1458,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470584548}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: -1, z: 0}
+  m_LocalPosition: {x: -2, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 69494320}
@@ -1484,6 +1484,7 @@ MonoBehaviour:
   firerate: 15
   shotSpeed: 8
   damage: 0
+  collectionLine: 0.8
   testPower: 0
 --- !u!50 &1470584553
 Rigidbody2D:

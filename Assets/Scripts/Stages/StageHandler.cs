@@ -37,6 +37,18 @@ public class StageHandler : MonoBehaviour {
     return pickup;
   }
 
+  // Sends all pickups to player
+  public static void CollectAllPickups() {
+    foreach(Transform pickup in instance.transform.Find("Pickups")) {
+      Pickup pickupScript = pickup.GetComponent<Pickup>();
+
+      // Set a fixed score multiplier for the original position
+      pickupScript.fixedScore = pickupScript.GetScore();
+
+      instance.StartCoroutine(MoveToPlayer(pickup.gameObject, .3f));
+    }
+  }
+
   // Wrapper for Object.Destroy
   public static void DestroyEnemy(GameObject enemy, float t) {
     Object.Destroy(enemy, t);
@@ -57,6 +69,22 @@ public class StageHandler : MonoBehaviour {
   }
 
   // Coroutines
+  // Move object to player
+  private static IEnumerator MoveToPlayer(GameObject obj, float time) {
+    Vector3 startPos = obj.transform.position;
+    float startTime = 0;
+
+    while(startTime < time) {
+      // Break if object gets deleted
+      if(obj == null) yield break;
+
+      obj.transform.position = Vector3.Lerp(startPos, PlayerController.instance.transform.position, startTime/time);
+      startTime += Time.deltaTime;
+      yield return null;
+    }
+    obj.transform.position = PlayerController.instance.transform.position;
+  }
+
   // Run several coroutines one after another
   private static IEnumerator SequentialCoroutine(List<IEnumerator> routines) {
     foreach(IEnumerator routine in routines) {
@@ -86,13 +114,13 @@ public class StageHandler : MonoBehaviour {
     instance = this;
 
     stage1 = GetComponent<Stage1>();
-  }
 
-  void Start() {
     // Stage bounds
     bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(32, 16, 0));
     topRight   = Camera.main.ScreenToWorldPoint(new Vector3(32 + 384, 16 + 448, 0));
+  }
 
+  void Start() {
     // Pickup dropSpeed
     Pickup.dropSpeed = 1f;
 
