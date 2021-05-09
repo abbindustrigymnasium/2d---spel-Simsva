@@ -41,16 +41,13 @@ public class PlayerController : MonoBehaviour {
   private uint score, hiScore; // TODO: Move hiScore to external file 
   private int lives, bombs;
   private float power;
-  
-  // Testing, remove later
-  public float testPower;
 
   // Reset score, lives, etc. to default
   private void ResetStats(int startLives = 2, int startBombs = 3) {
     // Reset variables
     score = 0; hiScore = 0;
     lives = startLives; bombs = startBombs;
-    ChangePower(1f);
+    ChangePower(.75f, true);
     
     // Update UI
     Score.UpdateScore(score);  Score.UpdateHiScore(hiScore);
@@ -150,6 +147,7 @@ public class PlayerController : MonoBehaviour {
     Vector3 deathPos = transform.position;
 
     // Move to spawn, stop controls and become invincible
+    SFXHandler.PlaySound("playerdeath");
     StartCoroutine(DeathVisualEffect(1f, .6f, 80f, deathPos));
     StartCoroutine(Invincibility(3f));
     StartCoroutine(Paralyze(.3f));
@@ -178,7 +176,8 @@ public class PlayerController : MonoBehaviour {
       bombs--;
       Score.UpdateBombs(bombs);
 
-      // Start bomb visual and "physical" effects
+      // Start bomb visual, audio and "physical" effects
+      SFXHandler.PlaySound("bomb");
       StartCoroutine(ScaleRotateEffect(3f, .8f, 80f, bombEffect));
       StartCoroutine(BombEffect(.6f));
     }
@@ -201,9 +200,11 @@ public class PlayerController : MonoBehaviour {
   }
 
   // Update power value
-  public void ChangePower(float newPower) {
+  public void ChangePower(float newPower, bool silent = false) {
     newPower = Mathf.Clamp(newPower, 0f, 5f);
-    testPower = newPower; // Remove
+
+    if(Mathf.FloorToInt(newPower) > Mathf.FloorToInt(power) && !silent)
+      SFXHandler.PlaySound("powerup");
 
     power = newPower;
     Score.UpdatePower(newPower);
@@ -311,9 +312,14 @@ public class PlayerController : MonoBehaviour {
     Orb.radius = focus ? .4f : .6f;
 
     shooting = Input.GetButton("Shoot");
-    // Reset fire timer
-    if(Input.GetButtonDown("Shoot"))
+    // Reset fire timer and play shooting sound
+    if(Input.GetButtonDown("Shoot")) {
+      SFXHandler.PlaySound("generic_shot", true);
       nextFire = Time.time;
+    }
+    if(Input.GetButtonUp("Shoot")) {
+      SFXHandler.StopSound("generic_shot");
+    }
     
     if(Input.GetButtonDown("Bomb"))
       Bomb();
@@ -330,9 +336,6 @@ public class PlayerController : MonoBehaviour {
       anim.SetFloat("Horizontal", movement.x);
       anim.SetBool("Moving", movement.x != 0);
     }
-
-    // Test power
-    ChangePower(testPower);
   }
 
   void FixedUpdate() {
@@ -369,6 +372,8 @@ public class PlayerController : MonoBehaviour {
       if(!invincible)
         Die();
     } else if(collider.CompareTag("Pickup")) {
+      SFXHandler.PlaySound("item_generic");
+
       Pickup pickup = collider.GetComponent<Pickup>();
 
       switch(pickup.type) {

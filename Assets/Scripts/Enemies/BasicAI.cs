@@ -15,6 +15,8 @@ public class BasicAI : BaseAI {
 
   public override void Shoot()
   {
+    SFXHandler.PlaySound("enemyshot");
+
     bulletData.pos = transform.position;
     bulletData.rot = BulletHandler.AngleToPlayer(transform.position);
 

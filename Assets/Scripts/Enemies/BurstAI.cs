@@ -18,6 +18,8 @@ public class BurstAI : BaseAI {
 
   public override void Shoot()
   {
+    SFXHandler.PlaySound("burstshot");
+
     bulletData.pos = transform.position;
     bulletData.rot = BulletHandler.AngleToPlayer(transform.position);
 

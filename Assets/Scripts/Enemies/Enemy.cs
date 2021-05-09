@@ -6,12 +6,15 @@ public class Enemy : MonoBehaviour {
   public BaseAI ai;
   [HideInInspector]
   public bool hasAi;
-  private bool dead = false;
+  private bool dead = false, hitOnFrame = false;
 
   public void Die() {
     // Don't accidentally spawn multiple pickups
     if(!dead) {
       dead = true;
+
+      // Play death sound
+      SFXHandler.PlaySound("enemydeath");
 
       // Spawn pickups
       while(scoreValue > 0 && powerValue > 0) {
@@ -49,6 +52,13 @@ public class Enemy : MonoBehaviour {
     } else {
       ai.inBounds = false;
     }
+
+    if(hitOnFrame) {
+      SFXHandler.PlaySound("enemyhit_loop", true);
+      hitOnFrame = false;
+    } else {
+      SFXHandler.StopSound("enemyhit_loop");
+    }
   }
 
   void FixedUpdate() {
@@ -66,6 +76,7 @@ public class Enemy : MonoBehaviour {
   void OnTriggerEnter2D(Collider2D collider) {
     // Only take damage when on-screen
     if(collider.CompareTag("Friendly") && StageHandler.InStageBounds(transform.position)) {
+      hitOnFrame = true;
       TakeDamage(PlayerController.instance.damage);
     }
   }

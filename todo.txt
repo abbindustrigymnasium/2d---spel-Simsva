@@ -4,7 +4,6 @@ thxx todo
 Stage 1
 
 	Planned
-Sound effects
 Refactor *Handler classes
 BezierMove task
 ?Options
@@ -18,6 +17,9 @@ BezierMove task
 	Bugs
 Pressing with mouse on main menu deselects all buttons
 Buttons are gray when first selected
+Player can bomb on pause menu
+Scenes load before button sounds play
+Multiple of same sound can't be played at once
 
 	Done
 UI
@@ -40,3 +42,4 @@ Bomb visuals
 Death visuals
 ?Sorting layers
 Game over
+Sound effects
