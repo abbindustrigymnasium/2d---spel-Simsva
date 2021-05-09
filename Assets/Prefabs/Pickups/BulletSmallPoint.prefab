@@ -23,6 +23,14 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -1997627320680158691, guid: 4f1ebe1872e7e7f43a3401ce5978db91, type: 3}
+      propertyPath: m_SortingLayer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -1997627320680158691, guid: 4f1ebe1872e7e7f43a3401ce5978db91, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1273887245
+      objectReference: {fileID: 0}
     - target: {fileID: 3357098303199350012, guid: 4f1ebe1872e7e7f43a3401ce5978db91, type: 3}
       propertyPath: m_Name
       value: BulletSmallPoint

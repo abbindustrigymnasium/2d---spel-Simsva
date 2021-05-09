@@ -14,11 +14,15 @@ public class Enemy : MonoBehaviour {
       dead = true;
 
       // Spawn pickups
-      for(int i = 0; i < scoreValue; i++) {
-        StageHandler.SpawnPickup(0, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f);
-      }
-      for(int i = 0; i < powerValue; i++) {
-        StageHandler.SpawnPickup(1, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f);
+      while(scoreValue > 0 && powerValue > 0) {
+        if(scoreValue > 0) {
+          StageHandler.SpawnPickup(0, transform.position, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f, .2f);
+          scoreValue--;
+        }
+        if(powerValue > 0) {
+          StageHandler.SpawnPickup(1, transform.position, (Vector2)transform.position + (Random.insideUnitCircle + Vector2.up) * .5f, .2f);
+          powerValue--;
+        }
       }
 
       // Destroy object

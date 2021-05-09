@@ -44,3 +44,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 4233363893
+    locked: 0
+  - name: Effect
+    uniqueID: 1487331657
+    locked: 0
+  - name: Entities
+    uniqueID: 1861552403
+    locked: 0
+  - name: Bullets
+    uniqueID: 4005448083
+    locked: 0
+  - name: Pickups
+    uniqueID: 1273887245
+    locked: 0
+  - name: Overlay
+    uniqueID: 1024022607
+    locked: 0

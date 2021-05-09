@@ -21,6 +21,37 @@ public class StageHandler : MonoBehaviour {
         && pos.y < topRight.y && pos.y > bottomLeft.y;
   }
 
+  public static IEnumerator MoveObject(float timeMs, GameObject obj, Vector3 endPos) {
+    Vector3 startPos = obj.transform.position;
+    float startTime = 0;
+
+    while(startTime < timeMs/1000) {
+      // Break if enemy is killed
+      if(obj == null) yield break;
+
+      obj.transform.position = Vector3.Lerp(startPos, endPos, startTime/(timeMs/1000));
+      startTime += Time.deltaTime;
+      yield return null;
+    }
+    if(obj != null)
+      obj.transform.position = endPos;
+  }
+
+  public static IEnumerator MoveObjectSmooth(float timeMs, GameObject obj, Vector3 endPos) {
+    Vector3 startPos = obj.transform.position;
+    float startTime = 0;
+
+    while(startTime < timeMs/1000) {
+      if(obj == null) yield break;
+
+      obj.transform.position = Vector3.Lerp(startPos, endPos, Mathf.SmoothStep(0f, 1f, startTime/(timeMs/1000)));
+      startTime += Time.deltaTime;
+      yield return null;
+    }
+    if(obj != null)
+      obj.transform.position = endPos;
+  }
+
   // Instantiate new enemy
   public static GameObject SpawnEnemy(int id, Vector3 pos, bool hasAi = false, float hpOverride = -1f) {
     GameObject enemy = Instantiate(instance.enemies[id], pos, Quaternion.identity, instance.transform.Find("Enemies"));
@@ -37,6 +68,13 @@ public class StageHandler : MonoBehaviour {
   public static GameObject SpawnPickup(int id, Vector3 pos, int valueOverride = -1) {
     GameObject pickup = Instantiate(instance.pickups[id], pos, Quaternion.identity, instance.transform.Find("Pickups"));
     if(valueOverride > 0) pickup.GetComponent<Pickup>().value = valueOverride;
+    return pickup;
+  }
+
+  // Instantiate new pickup and move it from startPos to endPos in time seconds
+  public static GameObject SpawnPickup(int id, Vector3 startPos, Vector3 endPos, float time, int valueOverride = -1) {
+    GameObject pickup = SpawnPickup(id, startPos, valueOverride: valueOverride);
+    instance.StartCoroutine(MoveObject(time*1000, pickup, endPos));
     return pickup;
   }
 

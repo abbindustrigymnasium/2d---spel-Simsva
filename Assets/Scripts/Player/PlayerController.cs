@@ -31,6 +31,10 @@ public class PlayerController : MonoBehaviour {
   private float nextFire;
   private BulletData bulletData;
 
+  // Effects
+  public GameObject deathEffect; // Make private?
+  private SpriteRenderer bombEffect;
+
   // Score
   public float collectionLine = .8f;
   private float collectionLineY;
@@ -72,7 +76,56 @@ public class PlayerController : MonoBehaviour {
     paralyzed = false;
   }
 
-  private void DropPower(float amount) {
+  // Spawn death visual effect at pos
+  // TODO: Shake effect
+  private IEnumerator DeathVisualEffect(float fadeTime, float scaleTime, float rotateSpeed, Vector3 pos) {
+    GameObject deathObject = Instantiate(deathEffect, pos, Quaternion.identity);
+    SpriteRenderer deathSprite = deathObject.GetComponent<SpriteRenderer>();
+
+    yield return ScaleRotateEffect(fadeTime, scaleTime, rotateSpeed, deathSprite);
+    Destroy(deathObject);
+
+    yield return null;
+  }
+
+  // After delay seconds: Kill all enemies and convert all enemy bullets to score pickups, then collect them
+  private IEnumerator BombEffect(float delay) {
+    yield return new WaitForSeconds(delay);
+    StageHandler.KillAllEnemies();
+    BulletHandler.BulletsToScore();
+    StageHandler.CollectAllPickups(useConstantScore: true);
+  }
+
+  // Scale, rotate and fade out effect
+  private IEnumerator ScaleRotateEffect(float fadeTime, float scaleTime, float rotateSpeed, SpriteRenderer effect) {
+    effect.transform.localScale = Vector3.zero;
+    effect.color = Color.white;
+    effect.enabled = true;
+
+    float startTime = 0;
+    while(startTime < scaleTime) {
+      effect.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, startTime/scaleTime);
+      effect.transform.Rotate(Vector3.forward, rotateSpeed * Time.deltaTime, Space.World);
+
+      startTime += Time.deltaTime;
+      yield return null;
+    }
+    effect.transform.localScale = Vector3.one;
+
+    startTime = 0;
+    while(startTime < fadeTime) {
+      effect.color = Color.Lerp(Color.white, new Color(1f, 1f, 1f, 0f), startTime/fadeTime);
+      effect.transform.Rotate(Vector3.forward, rotateSpeed * Time.deltaTime, Space.World);
+
+      startTime += Time.deltaTime;
+      yield return null;
+    }
+    effect.enabled = false;
+
+    yield return null;
+  }
+
+  private void DropPower(Vector3 startPos, float amount) {
     // Calculate number of big and small pickups needed
     // Large pickup = .12 power, small pickup = .03 power
     // TODO: Get pickup values in Start()?
@@ -82,11 +135,11 @@ public class PlayerController : MonoBehaviour {
     // Spawn pickups above player
     while(smallPickup > 0 && bigPickup > 0) {
       if(smallPickup > 0) {
-        StageHandler.SpawnPickup(1, Random.insideUnitCircle + StageHandler.center + 1.5f * Vector2.up);
+        StageHandler.SpawnPickup(1, startPos, Random.insideUnitCircle + StageHandler.center + 1.5f * Vector2.up, .2f);
         smallPickup--;
       }
       if(bigPickup > 0) {
-        StageHandler.SpawnPickup(3, Random.insideUnitCircle + StageHandler.center + 1.5f * Vector2.up);
+        StageHandler.SpawnPickup(3, startPos, Random.insideUnitCircle + StageHandler.center + 1.5f * Vector2.up, .2f);
         bigPickup--;
       }
     }
@@ -94,15 +147,18 @@ public class PlayerController : MonoBehaviour {
 
   // Actions
   private void Die() {
-    // Lose 35% of power and drop 30%
-    // Drops power above death position
-    DropPower(power * 0.30f);
-    ChangePower(power * 0.65f);
+    Vector3 deathPos = transform.position;
 
     // Move to spawn, stop controls and become invincible
+    StartCoroutine(DeathVisualEffect(1f, .6f, 80f, deathPos));
     StartCoroutine(Invincibility(3f));
     StartCoroutine(Paralyze(.3f));
     transform.position = startPos;
+
+    // Lose 35% of power and drop 30%
+    // Drops power above death position
+    DropPower(deathPos, power * 0.30f);
+    ChangePower(power * 0.65f);
 
     // Kill bullets
     BulletHandler.BulletsToScore();
@@ -120,11 +176,9 @@ public class PlayerController : MonoBehaviour {
       bombs--;
       Score.UpdateBombs(bombs);
 
-      // Kill all enemies and convert all enemy bullets to score pickups, then collect them
-      // TODO: Shake effect + visuals
-      BulletHandler.BulletsToScore();
-      StageHandler.KillAllEnemies();
-      StageHandler.CollectAllPickups(useConstantScore: true);
+      // Start bomb visual and "physical" effects
+      StartCoroutine(ScaleRotateEffect(3f, .8f, 80f, bombEffect));
+      StartCoroutine(BombEffect(.6f));
     }
   }
 
@@ -202,6 +256,7 @@ public class PlayerController : MonoBehaviour {
     anim = GetComponent<Animator>();
     sprite = GetComponent<SpriteRenderer>();
     focusHitbox = transform.Find("FocusHitbox").GetComponent<SpriteRenderer>();
+    bombEffect = transform.Find("BombEffect").GetComponent<SpriteRenderer>();
 
     // Default firerate
     if(firerate <= 0)
@@ -213,6 +268,8 @@ public class PlayerController : MonoBehaviour {
     for(int i = 0; i < 4; i++) {
       GameObject orb = Instantiate(orbPrefab, transform.Find("Orbs"));
       orb.SetActive(false);
+      orb.GetComponent<SpriteRenderer>().sortingLayerName = "Entities";
+      orb.GetComponent<SpriteRenderer>().sortingOrder = 2;
       orb.GetComponent<Orb>().id = i;
       orb.name = "Orb" + i.ToString();
     }

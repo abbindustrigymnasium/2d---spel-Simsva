@@ -30,9 +30,9 @@ public class Stage1Timeline : BaseTimeline {
 
       // Actions exeucted for each enemy
       List<IEnumerator> actions = new List<IEnumerator>() {
-        MoveEnemySmooth(moveTimeMs * stopDistance/13, enemies[i], enemies[i].transform.position + stopDistance*Vector3.down),
+        StageHandler.MoveObjectSmooth(moveTimeMs * stopDistance/13, enemies[i], enemies[i].transform.position + stopDistance*Vector3.down),
         WaitMs(waitTimeMs),
-        MoveEnemySmooth(moveTimeMs * (13-stopDistance)/13, enemies[i], enemies[i].transform.position + (13 - stopDistance)*Vector3.down),
+        StageHandler.MoveObjectSmooth(moveTimeMs * (13-stopDistance)/13, enemies[i], enemies[i].transform.position + (13 - stopDistance)*Vector3.down),
         DeleteEnemy(enemies[i])
       };
 
@@ -71,9 +71,9 @@ public class Stage1Timeline : BaseTimeline {
       ), true);
 
       List<IEnumerator> actions = new List<IEnumerator>() {
-        MoveEnemySmooth(moveTimeMs, enemies[i], enemies[i].transform.position + stopDistance*Vector3.down),
+        StageHandler.MoveObjectSmooth(moveTimeMs, enemies[i], enemies[i].transform.position + stopDistance*Vector3.down),
         WaitMs(waitTimeMs),
-        MoveEnemySmooth(moveTimeMs, enemies[i], new Vector3(
+        StageHandler.MoveObjectSmooth(moveTimeMs, enemies[i], new Vector3(
           StageHandler.center.x + sign*StageHandler.size.x/2,
           enemies[i].transform.position.y - 2*stopDistance
         )),
@@ -121,7 +121,7 @@ public class Stage1Timeline : BaseTimeline {
 
       // Actions
       List<IEnumerator> actions = new List<IEnumerator>() {
-        MoveEnemySmooth(moveTimeMs, enemies[i], endPos),
+        StageHandler.MoveObjectSmooth(moveTimeMs, enemies[i], endPos),
         BulletHandler.ShootSpiral(newBulletData, count, shootTimeMs/1000),
         WaitMs(waitTimeMs),
         ToggleEnemyAI(enemies[i], true)

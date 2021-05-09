@@ -2,11 +2,10 @@ thxx todo
 
 	Doing
 Stage 1
+Game over
 
 	Planned
 Sound effects
-Bomb visuals
-Death visuals
 Refactor *Handler classes
 BezierMove task
 ?Options
@@ -15,6 +14,7 @@ BezierMove task
 ?Stage "All Clear!" screen
 ?Console commands
 ?Resolution
+?Separate death and bomb effects
 
 	Bugs
 Pressing with mouse on main menu deselects all buttons
@@ -36,3 +36,6 @@ Player Death
 BurstAI
 !Circle Fairies or whatever
 Pause menu
+Bomb visuals
+Death visuals
+?Sorting layers
