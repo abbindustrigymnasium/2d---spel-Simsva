@@ -51,7 +51,7 @@ public class Enemy : MonoBehaviour {
     if(hasAi && StageHandler.InStageBounds(transform.position)) {
       if(ai.inBounds) {
         while(Time.time > ai.nextFire) {
-          ai.Shoot(PlayerController.instance.transform.position);
+          ai.Shoot();
 
           ai.nextFire += ai.firedelay;
         }

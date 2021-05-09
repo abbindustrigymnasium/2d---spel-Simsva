@@ -215,8 +215,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 189693865}
-  - component: {fileID: 189693864}
+  - component: {fileID: 189693866}
   - component: {fileID: 189693863}
+  - component: {fileID: 189693864}
   m_Layer: 0
   m_Name: Stage
   m_TagString: Untagged
@@ -239,13 +240,15 @@ MonoBehaviour:
   enemies:
   - {fileID: 5246859514354573319, guid: 20dc05d15dee3d04b84daaa9fa3f0f20, type: 3}
   - {fileID: 291932832377560724, guid: f21caa9f8f7fbb04b98936ef099526e7, type: 3}
-  - {fileID: 6173885224871244816, guid: 2d1d760e54ee46e4799a449fe0bf57a9, type: 3}
+  - {fileID: 4251181137739855070, guid: 28406ae285f2cb741aad726ab689b689, type: 3}
   pickups:
   - {fileID: 3357098303199350012, guid: 4f1ebe1872e7e7f43a3401ce5978db91, type: 3}
   - {fileID: 187462502590255381, guid: 240f99b5e3367524e85325893da370a1, type: 3}
   - {fileID: 8378087996095511251, guid: c585acb3531edd84194b1f9c3918545b, type: 3}
   - {fileID: 2703754727360514137, guid: e960a2af424e02d4b812c536cf3749fb, type: 3}
   - {fileID: 7326413460572787168, guid: 0f71381f404cd28459cebd134f4cc0e1, type: 3}
+  backgrounds:
+  - {fileID: 21300000, guid: 2ffa70080a34a8f478896c0ff52f3a9e, type: 3}
 --- !u!114 &189693864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,6 +277,58 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &189693866
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189693862}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -10
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 7.68, y: 8.96}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &239069553
 GameObject:
   m_ObjectHideFlags: 0

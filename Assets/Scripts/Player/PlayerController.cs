@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour {
 
   // Movement/controls
   public float movementSpeed, focusMovementSpeed;
+  private bool paralyzed = false;
   private Vector2 movement;
   private Vector2 movementRangeMin, movementRangeMax;
   private bool focus, shooting;
@@ -24,7 +25,8 @@ public class PlayerController : MonoBehaviour {
   public float firerate, shotSpeed;
   [HideInInspector]
   public float damage;
-  private bool invincible = false;
+  [HideInInspector]
+  public bool invincible = false;
   private int orbs;
   private float nextFire;
   private BulletData bulletData;
@@ -63,6 +65,13 @@ public class PlayerController : MonoBehaviour {
     sprite.color = new Color(1f, 1f, 1f, 1f);
   }
 
+  // Stop controls for time seconds
+  private IEnumerator Paralyze(float time) {
+    paralyzed = true;
+    yield return new WaitForSeconds(time);
+    paralyzed = false;
+  }
+
   private void DropPower(float amount) {
     // Calculate number of big and small pickups needed
     // Large pickup = .12 power, small pickup = .03 power
@@ -73,11 +82,11 @@ public class PlayerController : MonoBehaviour {
     // Spawn pickups above player
     while(smallPickup > 0 && bigPickup > 0) {
       if(smallPickup > 0) {
-        StageHandler.SpawnPickup(1, (Vector3)Random.insideUnitCircle + transform.position + Vector3.up);
+        StageHandler.SpawnPickup(1, Random.insideUnitCircle + StageHandler.center + 1.5f * Vector2.up);
         smallPickup--;
       }
       if(bigPickup > 0) {
-        StageHandler.SpawnPickup(3, (Vector3)Random.insideUnitCircle + transform.position + Vector3.up);
+        StageHandler.SpawnPickup(3, Random.insideUnitCircle + StageHandler.center + 1.5f * Vector2.up);
         bigPickup--;
       }
     }
@@ -90,8 +99,9 @@ public class PlayerController : MonoBehaviour {
     DropPower(power * 0.30f);
     ChangePower(power * 0.65f);
 
-    // Move to spawn and become invincible
+    // Move to spawn, stop controls and become invincible
     StartCoroutine(Invincibility(3f));
+    StartCoroutine(Paralyze(.3f));
     transform.position = startPos;
 
     // Kill bullets
@@ -225,7 +235,7 @@ public class PlayerController : MonoBehaviour {
     // Default bullet data
     bulletData = new BulletData(
       Vector3.zero,
-      90f,
+      0f,
       true,
       Color.red,
       shotSpeed
@@ -254,15 +264,24 @@ public class PlayerController : MonoBehaviour {
     movement.Normalize(); movement *= focus ? focusMovementSpeed : movementSpeed;
 
     // Animation
-    anim.SetFloat("Horizontal", movement.x);
-    anim.SetBool("Moving", movement.x != 0);
+    if(paralyzed) {
+      anim.SetFloat("Horizontal", 0);
+      anim.SetBool("Moving", false);
+    } else {
+      anim.SetFloat("Horizontal", movement.x);
+      anim.SetBool("Moving", movement.x != 0);
+    }
 
     // Test power
     ChangePower(testPower);
   }
 
   void FixedUpdate() {
-    rb.velocity = movement * Time.fixedDeltaTime;
+    // Move if not paralyzed
+    if(paralyzed)
+      rb.velocity = Vector2.zero;
+    else
+      rb.velocity = movement * Time.fixedDeltaTime;
 
     // Clamp position to screen
     transform.position = new Vector3(
@@ -296,10 +315,8 @@ public class PlayerController : MonoBehaviour {
       switch(pickup.type) {
       case PickupType.Point:
         float multiplier = (pickup.fixedScore == 0) ? pickup.GetScore() : pickup.fixedScore;
-        uint score = (uint)Mathf.RoundToInt(pickup.value * multiplier);
-
-        Debug.Log(score);
-        AddScore(score);
+        
+        AddScore((uint)Mathf.RoundToInt(pickup.value * multiplier));
         break;
 
       case PickupType.Power:

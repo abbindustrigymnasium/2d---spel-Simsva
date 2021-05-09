@@ -61,7 +61,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5258954885657749480, guid: 345a4339215dbb04880cb363087cfcd9, type: 3}
       propertyPath: firedelay
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7899173492366835235, guid: 345a4339215dbb04880cb363087cfcd9, type: 3}
       propertyPath: m_Name

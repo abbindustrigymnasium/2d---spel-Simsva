@@ -17,6 +17,12 @@ public class BaseTimeline {
   // List of tasks in timeline (must be in chronological order)
   protected List<Task> tasks = new List<Task>();
 
+  // Methods
+  // Calculates equal spacing across stage
+  protected float StageSpread(int count) {
+    return StageHandler.length.x/(count+1);
+  }
+
   // Useful IEnumerators
   protected IEnumerator Log(string text) {
     Debug.Log(text);
@@ -26,6 +32,11 @@ public class BaseTimeline {
   // Used in List<IEnumerator> instead of WaitForSeconds because of type
   protected IEnumerator WaitMs(float ms) {
     yield return new WaitForSeconds(ms/1000f);
+  }
+
+  protected IEnumerator SpawnEnemy(int id, Vector3 pos, bool hasAi = false, float hpOverride = -1f) {
+    StageHandler.SpawnEnemy(id, pos, hasAi: hasAi, hpOverride: hpOverride);
+    yield return null;
   }
 
   protected IEnumerator DeleteEnemy(GameObject enemy, float t = 0f) {
@@ -75,6 +86,21 @@ public class BaseTimeline {
     yield return null;
   }
 
+  // Set background image
+  protected IEnumerator SetBackground(int id) {
+    StageHandler.SetBackground(id);
+    yield return null;
+  }
+
+  // Toggle enemy AI
+  protected IEnumerator ToggleEnemyAI(GameObject enemy, bool hasAi) {
+    if(enemy.GetComponent<BaseAI>() != null) {
+      enemy.GetComponent<Enemy>().hasAi = hasAi;
+      enemy.GetComponent<BaseAI>().enabled = hasAi;
+    }
+    yield return null;
+  }
+
   // Add task to list
   protected void AddTask(int timeMs, IEnumerator task) {
     tasks.Add(new Task(timeMs, task));
@@ -82,8 +108,9 @@ public class BaseTimeline {
 
   // Loop through tasks
   public IEnumerator Run() {
-    // Initialize tasks
+    // Initialize and sort tasks
     Init();
+    tasks.Sort((x, y) => x.timeMs.CompareTo(y.timeMs));
 
     Int64 start = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     foreach(Task task in tasks) {

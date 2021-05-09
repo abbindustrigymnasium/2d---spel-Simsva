@@ -13,12 +13,10 @@ public class BasicAI : BaseAI {
     );
   }
 
-  public override void Shoot(Vector3 player)
+  public override void Shoot()
   {
-    Vector3 direction = player - transform.position;
-
     bulletData.pos = transform.position;
-    bulletData.rot = Vector2.SignedAngle(Vector2.right, direction);
+    bulletData.rot = BulletHandler.AngleToPlayer(transform.position);
 
     BulletHandler.ShootBullet(bulletData);
   }

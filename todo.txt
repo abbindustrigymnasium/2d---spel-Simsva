@@ -4,11 +4,10 @@ thxx todo
 Stage 1
 
 	Planned
-!Circle Fairies or whatever
 Sound effects
 Bomb visuals
 Death visuals
-EnemyHandler class (maybe integrate with StageHandler)
+Refactor *Handler classes
 BezierMove task
 ?Options
 ?Music Room
@@ -33,3 +32,5 @@ Music
 Main Menu
 Bombs
 Player Death
+BurstAI
+!Circle Fairies or whatever

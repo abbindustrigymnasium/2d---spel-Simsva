@@ -5,8 +5,11 @@ using UnityEngine;
 public class StageHandler : MonoBehaviour {
   public static StageHandler instance;
 
+  private SpriteRenderer background;
+
   public List<GameObject> enemies, pickups;
-  public static Vector2 bottomLeft, topRight;
+  public List<Sprite> backgrounds;
+  public static Vector2 bottomLeft, topRight, center, length;
 
   // Stages
   private Stage1 stage1;
@@ -77,6 +80,10 @@ public class StageHandler : MonoBehaviour {
       return closest.gameObject;
   }
 
+  public static void SetBackground(int id) {
+    instance.background.sprite = instance.backgrounds[id];
+  }
+
   // Coroutines
   // Move object to player
   private static IEnumerator MoveToPlayer(GameObject obj, float time) {
@@ -122,11 +129,18 @@ public class StageHandler : MonoBehaviour {
   void Awake() {
     instance = this;
 
+    background = GetComponent<SpriteRenderer>();
+
+    // Stages
     stage1 = GetComponent<Stage1>();
 
     // Stage bounds
     bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(32, 16, 0));
     topRight   = Camera.main.ScreenToWorldPoint(new Vector3(32 + 384, 16 + 448, 0));
+    center     = new Vector2((bottomLeft.x + topRight.x)/2, (bottomLeft.y+topRight.y)/2);
+    length     = new Vector2(Mathf.Abs(bottomLeft.x - topRight.x), Mathf.Abs(bottomLeft.y - topRight.y));
+
+    transform.position = center;
   }
 
   void Start() {

@@ -1,6 +1,7 @@
 using UnityEngine;
 
 public class BaseAI : MonoBehaviour {
+  // Used to check when enemy enters bounds
   [HideInInspector]
   public bool inBounds;
   [HideInInspector]
@@ -9,5 +10,6 @@ public class BaseAI : MonoBehaviour {
   public float firedelay = 2f;
   public BulletData bulletData;
 
-  public virtual void Shoot(Vector3 player) {}
+
+  public virtual void Shoot() {}
 }

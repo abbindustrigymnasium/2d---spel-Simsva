@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ public class BulletHandler : MonoBehaviour {
     // Orbs
     Orb.bulletData = new BulletData(
       Vector3.zero,
-      90f,
+      0f,
       true,
       Color.blue,
       PlayerController.instance.shotSpeed,
@@ -59,14 +60,55 @@ public class BulletHandler : MonoBehaviour {
   }
 
   // Shoot spread bullets
-  public static void ShootSplit(BulletData data, float spread, int amount) {
-    float difference = spread/(amount-1);
+  public static void ShootSplit(BulletData data, float spread, int count) {
+    float difference = spread/(count-1);
     data.rot -= spread/2;
 
-    for(int i = 0; i < amount; i++) {
+    for(int i = 0; i < count; i++) {
       ShootBullet(data);
       data.rot += difference;
     }
+  }
+
+  // Shoot bullet burst
+  public static IEnumerator ShootBurst(BulletData data, float spread, int count, float time, GameObject requiredObj = null) {
+    bool hasRequiredObj = requiredObj != null;
+    float delay = time/count;
+
+    for(int i = 0; i < count; i++) {
+      // Stop if requiredObj was destroyed
+      if(hasRequiredObj && requiredObj == null) yield break;
+
+      BulletData newData = data;
+      if(hasRequiredObj) newData.pos = requiredObj.transform.position;
+      newData.rot = data.rot + Random.Range(-spread, spread);
+      ShootBullet(newData);
+
+      yield return new WaitForSeconds(delay);
+    }
+
+    yield return null;
+  }
+
+  // Shoot bullets in a spiral
+  public static IEnumerator ShootSpiral(BulletData data, int count, float time, GameObject requiredObj = null) {
+    bool hasRequiredObj = requiredObj != null;
+    float delay = time/count;
+    float angle = 360f/count;
+
+    for(int i = 0; i < count; i++) {
+      // Stop if requiredObj was destroyed
+      if(hasRequiredObj && requiredObj == null) yield break;
+
+      BulletData newData = data;
+      if(hasRequiredObj) newData.pos = requiredObj.transform.position;
+      newData.rot = data.rot + i * angle;
+      ShootBullet(newData);
+
+      yield return new WaitForSeconds(delay);
+    }
+
+    yield return null;
   }
 
   // Mode flags:
@@ -109,5 +151,10 @@ public class BulletHandler : MonoBehaviour {
     foreach(GameObject bullet in bullets) {
       Destroy(bullet);
     }
+  }
+
+  // Get angle to player
+  public static float AngleToPlayer(Vector2 pos) {
+    return Vector2.SignedAngle(Vector2.up, (Vector2)PlayerController.instance.transform.position - pos);
   }
 }
