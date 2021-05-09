@@ -9,7 +9,7 @@ public class StageHandler : MonoBehaviour {
 
   public List<GameObject> enemies, pickups;
   public List<Sprite> backgrounds;
-  public static Vector2 bottomLeft, topRight, center, length;
+  public static Vector2 bottomLeft, topRight, center, size, pixelSize;
 
   // Stages
   private Stage1 stage1;
@@ -138,7 +138,8 @@ public class StageHandler : MonoBehaviour {
     bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(32, 16, 0));
     topRight   = Camera.main.ScreenToWorldPoint(new Vector3(32 + 384, 16 + 448, 0));
     center     = new Vector2((bottomLeft.x + topRight.x)/2, (bottomLeft.y+topRight.y)/2);
-    length     = new Vector2(Mathf.Abs(bottomLeft.x - topRight.x), Mathf.Abs(bottomLeft.y - topRight.y));
+    size       = new Vector2(Mathf.Abs(bottomLeft.x - topRight.x), Mathf.Abs(bottomLeft.y - topRight.y));
+    pixelSize  = new Vector2(384, 448);
 
     transform.position = center;
   }

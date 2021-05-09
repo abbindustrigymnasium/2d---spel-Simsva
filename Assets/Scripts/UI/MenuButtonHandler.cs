@@ -2,13 +2,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MenuButtons : MonoBehaviour {
+public class MenuButtonHandler : MonoBehaviour {
   // Handle button press from its name
-  void HandleButton(string name) {
+  public void HandleButton(string name) {
+    Debug.Log(name);
+
     switch(name) {
     case "StartGame":
       // Load Game scene and unloads MainMenu
       SceneManager.LoadScene("Game", LoadSceneMode.Single);
+      break;
+    
+    case "MainMenu":
+      SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+      break;
+    
+    case "Resume":
+      PauseMenu.TogglePause(false);
       break;
     
     case "Quit":
@@ -31,9 +41,8 @@ public class MenuButtons : MonoBehaviour {
     foreach(Transform btnTransform in transform) {
       Button btn = btnTransform.GetComponent<Button>();
 
-      btn.colors = btnColors;
-
-      btn.onClick.AddListener(() => HandleButton(btnTransform.name));
+      if(btn != null)
+        btn.colors = btnColors;
     }
   }
 }

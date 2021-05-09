@@ -223,14 +223,14 @@ public class PlayerController : MonoBehaviour {
       StageHandler.bottomLeft.y + 1
     );
 
-    ResetStats();
+    ResetStats(); 
 
-    // Movement bounds (requires camera scale 4.8f because reasons)
-    Vector3 bottomLeftWorld = Camera.main.ScreenToWorldPoint(new Vector3(32 + 11, 16 + 23, 0)); //Camera.main.ViewportToWorldPoint(new Vector3( 1f/20,  1f/30, 0f));
-    Vector3 topRightWorld   = Camera.main.ScreenToWorldPoint(new Vector3(32 - 12 + 384, 16 - 22 + 448, 0)); //Camera.main.ViewportToWorldPoint(new Vector3(13f/20, 29f/30, 0f));
-
-    movementRangeMin = new Vector2(bottomLeftWorld.x, bottomLeftWorld.y);
-    movementRangeMax = new Vector2(topRightWorld.x,   topRightWorld.y);
+    // Movement bounds (requires camera scale 4.8f because pixel perfect camera)
+    // Lots of constants I don't know where to store
+    Vector2 playerCollisionSize = new Vector2(11.5f, 22.5f);
+    Vector2 targetResolution = new Vector2(640, 480);
+    movementRangeMin = Camera.main.ViewportToWorldPoint(new Vector2((32f + playerCollisionSize.x)/targetResolution.x, (16f + playerCollisionSize.y)/targetResolution.y));
+    movementRangeMax = Camera.main.ViewportToWorldPoint(new Vector2((32f - playerCollisionSize.x + StageHandler.pixelSize.x)/targetResolution.x, (16f - playerCollisionSize.y + StageHandler.pixelSize.y)/targetResolution.y));
 
     // Default bullet data
     bulletData = new BulletData(

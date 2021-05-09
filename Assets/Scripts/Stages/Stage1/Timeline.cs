@@ -74,7 +74,7 @@ public class Stage1Timeline : BaseTimeline {
         MoveEnemySmooth(moveTimeMs, enemies[i], enemies[i].transform.position + stopDistance*Vector3.down),
         WaitMs(waitTimeMs),
         MoveEnemySmooth(moveTimeMs, enemies[i], new Vector3(
-          StageHandler.center.x + sign*StageHandler.length.x/2,
+          StageHandler.center.x + sign*StageHandler.size.x/2,
           enemies[i].transform.position.y - 2*stopDistance
         )),
         DeleteEnemy(enemies[i])
@@ -104,7 +104,7 @@ public class Stage1Timeline : BaseTimeline {
 
       // Spawn enemies
       enemies[i] = StageHandler.SpawnEnemy(id, new Vector3(
-        StageHandler.center.x + sign*(StageHandler.length.x/2 + 1),
+        StageHandler.center.x + sign*(StageHandler.size.x/2 + 1),
         StageHandler.topRight.y - enterDistance
       ), false);
 
@@ -152,7 +152,7 @@ public class Stage1Timeline : BaseTimeline {
     for(int i = 0; i < 3; i++) {
       AddTask(3000 + 500*i, TaskBurst2(0, stopDistance: 3f - .5f*i));
 
-      AddTask(10000 + 500*i, TaskBurst2(0, stopDistance: 3f - .5f*i, centerDistance: StageHandler.length.x/8*(3-i)));
+      AddTask(10000 + 500*i, TaskBurst2(0, stopDistance: 3f - .5f*i, centerDistance: StageHandler.size.x/8*(3-i)));
     }
 
     AddTask(14000, TaskBurst3(2, bulletData, count: 50, centerDistance: 1f));

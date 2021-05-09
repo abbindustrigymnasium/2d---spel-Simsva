@@ -20,7 +20,7 @@ public class BaseTimeline {
   // Methods
   // Calculates equal spacing across stage
   protected float StageSpread(int count) {
-    return StageHandler.length.x/(count+1);
+    return StageHandler.size.x/(count+1);
   }
 
   // Useful IEnumerators
