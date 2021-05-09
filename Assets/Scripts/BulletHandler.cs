@@ -51,7 +51,9 @@ public class BulletHandler : MonoBehaviour {
   // Shoot one bullet
   public static void ShootBullet(BulletData data) {
     GameObject newBullet = Instantiate(instance.bullets[data.id], data.pos, Quaternion.AngleAxis(data.rot, Vector3.forward), instance.transform);
-    newBullet.GetComponent<SpriteRenderer>().sortingOrder = data.friendly ? 1 : 0; // Friendly bullets render above others
+    // Friendly bullets render under player
+    newBullet.GetComponent<SpriteRenderer>().sortingOrder = data.friendly ? -2 : 2;
+    newBullet.transform.Find("Mid").GetComponent<SpriteRenderer>().sortingOrder = data.friendly ? -1 : 3;
     newBullet.GetComponent<SpriteRenderer>().color = data.color;
     newBullet.tag = data.friendly ? "Friendly" : "Enemy";
 

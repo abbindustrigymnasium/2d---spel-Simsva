@@ -2271,7 +2271,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1861552403
   m_SortingLayer: 3
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 8214928913798523097, guid: ed2542f31275c804e93f77f4c73ced51, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2321,7 +2321,6 @@ MonoBehaviour:
   invincible: 0
   deathEffect: {fileID: 9190366191112252959, guid: bfb74a6a08f2b5c4e93baa5068948dc5, type: 3}
   collectionLine: 0.8
-  testPower: 0
 --- !u!50 &1470584553
 Rigidbody2D:
   serializedVersion: 4

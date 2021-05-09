@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5181265241964454106, guid: 345a4339215dbb04880cb363087cfcd9, type: 3}
       propertyPath: hp
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5258954885657749480, guid: 345a4339215dbb04880cb363087cfcd9, type: 3}
       propertyPath: firedelay
