@@ -3,7 +3,6 @@ using UnityEngine.EventSystems;
 
 public class ButtonScript : MonoBehaviour, ISubmitHandler, ICancelHandler {
   public MenuButtonHandler buttonHandler;
-  public EventSystem eventSystem;
   public GameObject cancelObject;
 
   public void OnSubmit(BaseEventData eventData) {
@@ -11,6 +10,6 @@ public class ButtonScript : MonoBehaviour, ISubmitHandler, ICancelHandler {
   }
 
   public void OnCancel(BaseEventData eventData) {
-    eventSystem.SetSelectedGameObject(cancelObject);
+    EventSystem.current.SetSelectedGameObject(cancelObject);
   }
 }

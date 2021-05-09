@@ -2,7 +2,6 @@ thxx todo
 
 	Doing
 Stage 1
-Game over
 
 	Planned
 Sound effects
@@ -18,6 +17,7 @@ BezierMove task
 
 	Bugs
 Pressing with mouse on main menu deselects all buttons
+Buttons are gray when first selected
 
 	Done
 UI
@@ -39,3 +39,4 @@ Pause menu
 Bomb visuals
 Death visuals
 ?Sorting layers
+Game over

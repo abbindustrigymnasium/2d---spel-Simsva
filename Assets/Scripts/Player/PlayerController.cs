@@ -167,6 +167,8 @@ public class PlayerController : MonoBehaviour {
       lives--;
       Score.UpdatePlayer(lives);
     } else {
+      // Pause and disable resuming on game over
+      PauseMenu.TogglePause(PauseMode.GameOver);
       Debug.Log("Game Over");
     }
   }

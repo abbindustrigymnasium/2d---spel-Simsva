@@ -5,10 +5,9 @@ using UnityEngine.SceneManagement;
 public class MenuButtonHandler : MonoBehaviour {
   // Handle button press from its name
   public void HandleButton(string name) {
-    Debug.Log(name);
-
     switch(name) {
     case "StartGame":
+    case "RestartGame":
       // Load Game scene and unloads MainMenu
       SceneManager.LoadScene("Game", LoadSceneMode.Single);
       break;
@@ -18,7 +17,7 @@ public class MenuButtonHandler : MonoBehaviour {
       break;
     
     case "Resume":
-      PauseMenu.TogglePause(false);
+      PauseMenu.TogglePause(PauseMode.Hide);
       break;
     
     case "Quit":
