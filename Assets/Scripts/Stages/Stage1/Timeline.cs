@@ -155,6 +155,6 @@ public class Stage1Timeline : BaseTimeline {
       AddTask(10000 + 500*i, TaskBurst2(0, stopDistance: 3f - .5f*i, centerDistance: StageHandler.size.x/8*(3-i)));
     }
 
-    AddTask(14000, TaskBurst3(2, bulletData, count: 50, centerDistance: 1f));
+    AddTask(17500, TaskBurst3(2, bulletData, count: 50, moveTimeMs: 2000f, centerDistance: 1f));
   }
 }
