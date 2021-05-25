@@ -37,11 +37,11 @@ mechanics turned out good and easily expandable, aside from a few minor ones.
 The biggest problem, not counting design, was storing enemy positions,
 movements, and attack patterns. In the end I took inspiration from "Taisei
 Project," an open source Touhou fangame. It used so-called "tasks," functions
-set to run at specified times after the start of the game to spawn enemies et
-cetera. These functions were defined programmatically in a "timeline" function,
-which allowed for loops when timing multiple of the same task. The closest
-analogue I found in Unity were coroutines, which was the obvious way to do it
-from the beginning.
+set to run at specified times after the start of the game to spawn and move
+enemies et cetera. These functions were defined programmatically in a
+"timeline" function, which allowed for loops when timing multiple of the same
+task. The closest analogue I found in Unity were coroutines, which was the
+obvious way to do it from the beginning, had I only though a bit more about it.
 
 ## Conclusion
 

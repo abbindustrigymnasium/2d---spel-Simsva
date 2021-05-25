@@ -42,7 +42,8 @@ använde så kallade "uppgifter," tidsbestämda funktioner som skötte om fiende
 och annat. Dessa funktioner definerades programmatiskt i en "tidslinje"
 funktion, vilket tillåter loopar om man ska tidsbestämma flera av samma
 uppgift. Den närmaste motsvarigheten jag hittade i Unity var "coroutines,"
-vilket var det uppenbara sättet att lösa problemet från början.
+vilket var det uppenbara sättet att lösa problemet från början om jag bara
+hade tänkt mer på saken.
 
 ## Avslutning
 
